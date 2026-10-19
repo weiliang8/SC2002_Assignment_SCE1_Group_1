@@ -2,7 +2,6 @@
 package entity;
 
 public class Dish implements MenuItem {
-
     private String name;
     private int priceCents;
     private int preparationUnits;

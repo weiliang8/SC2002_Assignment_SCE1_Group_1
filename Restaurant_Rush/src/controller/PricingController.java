@@ -17,8 +17,7 @@ public class PricingController {
     }
 
     public int calculateBill(Customer customer, MenuItem item) {
-
-          if (customer == null) {
+    if (customer == null) {
         throw new IllegalArgumentException("Customer cannot be null");
     }
 
