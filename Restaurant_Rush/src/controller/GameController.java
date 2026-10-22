@@ -67,7 +67,7 @@ public class GameController {
         Cashier cashier = new Cashier(restaurant, seatingController);
 
         //create customer controller 
-        CustomerController customerController = new CustomerController();
+        CustomerController customerController = new CustomerController(restaurant, seatingController);
         this.turnController = new TurnController(restaurant, customerController, waiter, chef, cashier, gameApp);
         runGame();
 

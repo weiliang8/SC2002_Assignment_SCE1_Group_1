@@ -149,4 +149,20 @@ public class Restaurant {
         }
         throw new IllegalArgumentException("Customer is not registered with this restaurant.");
     }
+
+    public Customer getfirstWaitingCustomer() {
+        Customer dequeued_customer = waitingQueue.peek();
+        waitingQueue.remove();
+        return dequeued_customer;
+    }
+
+    public Customer getFirstSeatedCustomer() {
+        for (Customer customer : customers) {
+            if (customer.getStatus() == CustomerStatus.SEATED
+                    && customer.getOrder() == null) {
+                return customer;
+            }
+        }
+        return null;
+    }
 }
