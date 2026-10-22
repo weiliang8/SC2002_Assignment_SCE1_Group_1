@@ -8,6 +8,7 @@ import entity.Restaurant;
 import entity.RestaurantStatistics;
 import entity.Table;
 import staff.WaiterAction;
+import entity.Customer;
 
 
 public class GameApp {
@@ -104,14 +105,16 @@ public class GameApp {
         }
 
     }
-
+    /* 
     public int getTargetId(){
         // get ID of customer or order manager wants to act on
     }
+    
 
     public void displayError(String message){
         // display error i guess(if not needed will remove)
     }
+    */
 
     public void displayTurnSummary(Restaurant restaurant, int currentTurn){
         // summarises turn
