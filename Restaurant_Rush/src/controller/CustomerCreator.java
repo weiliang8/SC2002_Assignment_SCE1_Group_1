@@ -2,10 +2,7 @@ package controller;
 
 import entity.RegularCustomer;
 
-
-
-
-/** Factory for Stage 1. CustomerType is deliberately not used. */
+/** Factory for Stage 1*/
 public class CustomerCreator {
     public CustomerCreator(){};
 

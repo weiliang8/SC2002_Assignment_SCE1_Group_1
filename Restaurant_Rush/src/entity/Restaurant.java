@@ -13,7 +13,7 @@ public class Restaurant {
     private static final int TABLE_COUNT = 2;
 
     private final Queue<Customer> waitingQueue;
-    private final List<Customer> customers;
+    private final List<Customer> customers; //stored all customer in
     private final List<Table> tables;
     private final Menu menu;
     private final RestaurantStatistics statistics;
@@ -71,18 +71,18 @@ public class Restaurant {
     }
 
     /** Returns the earliest registered customer who is eligible to pay this turn. */
-    public Customer getOldestReadyPayer(int turn) {
-        if (turn < 1) {
-            throw new IllegalArgumentException("Turn must be positive.");
-        }
-        for (Customer customer : customers) {
-            if (customer.canPay(turn)
-                    && !paidCustomers.contains(customer)) {
-                return customer;
-            }
-        }
-        return null;
-    }
+     public Customer getOldestReadyPayer(int turn) {
+         if (turn < 1) {
+             throw new IllegalArgumentException("Turn must be positive.");
+         }
+         for (Customer customer : customers) {
+             if (customer.canPay(turn)
+                     && !paidCustomers.contains(customer)) {
+                 return customer;
+             }
+         }
+         return null;
+     }
 
     public List<Customer> getCustomers() {
         return Collections.unmodifiableList(customers);
@@ -150,19 +150,19 @@ public class Restaurant {
         throw new IllegalArgumentException("Customer is not registered with this restaurant.");
     }
 
-    public Customer getfirstWaitingCustomer() {
-        Customer dequeued_customer = waitingQueue.peek();
-        waitingQueue.remove();
-        return dequeued_customer;
-    }
+    // public Customer getfirstWaitingCustomer() {
+    //     Customer dequeued_customer = waitingQueue.peek();
+    //     waitingQueue.remove();
+    //     return dequeued_customer;
+    // }
 
-    public Customer getFirstSeatedCustomer() {
-        for (Customer customer : customers) {
-            if (customer.getStatus() == CustomerStatus.SEATED
-                    && customer.getOrder() == null) {
-                return customer;
-            }
-        }
-        return null;
-    }
+    // public Customer getFirstSeatedCustomer() {
+    //     for (Customer customer : customers) {
+    //         if (customer.getStatus() == CustomerStatus.SEATED
+    //                 && customer.getOrder() == null) {
+    //             return customer;
+    //         }
+    //     }
+    //     return null;
+    // }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import entity.Customer;
+import entity.CustomerStatus;
 import entity.Restaurant;
 import entity.CustomerType;
 
@@ -22,8 +23,7 @@ public class CustomerController {
         this.restaurant = Objects.requireNonNull(restaurant, "Restaurant is required.");
         this.customerCreator = new CustomerCreator();
         //this.customerCreator = Objects.requireNonNull(creator, "CustomerCreator is required.");//need change
-        this.seatingController = Objects.requireNonNull(seatingController,
-                "SeatingController is required.");
+        this.seatingController = Objects.requireNonNull(seatingController,"SeatingController is required.");
         // Normally empty at game start; avoid reusing IDs if records already exist.
         for (Customer customer : restaurant.getCustomers()) {
             nextCustomerId = Math.max(nextCustomerId, customer.getCustomerId() + 1);
@@ -60,14 +60,27 @@ public class CustomerController {
 
     /** Call after satisfaction loss. LEFT records stay available for reporting. */
     public void processAbandonment() {
-        for (Customer customer : snapshot()) {
-            if (customer.isWaitingForService() && customer.getSatisfaction() == 0) {
-                customer.leave();
-                restaurant.removeCustomerFromQueue(customer);
+
+    for (Customer customer : restaurant.getCustomers()) {
+
+        if (customer.isWaitingForService() && customer.getSatisfaction() == 0) {
+            boolean wasSeated =(customer.getStatus() == CustomerStatus.SEATED);
+            if (wasSeated) {
                 seatingController.releaseTable(customer);
-                restaurant.recordDeparture(customer);
             }
+            customer.leave();
+            restaurant.recordDeparture(customer);
         }
+    }
+}
+
+    public Customer getCustomerById(int id){
+         List<Customer> customers = restaurant.getCustomers();
+         for (Customer c : customers){
+            if(c.getCustomerId() == id)return c;
+         }
+
+            return null;
     }
 
     private List<Customer> snapshot() {

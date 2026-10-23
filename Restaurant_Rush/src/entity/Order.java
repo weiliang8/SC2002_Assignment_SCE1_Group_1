@@ -2,19 +2,34 @@ package entity;
 
 public class Order{
     private final int orderId;
+    private final int customerId;
     private final MenuItem item;
     private final int finalPriceCents;
     private int unitsCompleted = 0;
     private OrderStatus status = OrderStatus.ORDERED;
 
-    public Order(int orderId, MenuItem item, int finalPriceCents){
+    public Order(int orderId, int customerId, MenuItem item, int finalPriceCents){
         this.orderId = orderId;
+        this.customerId = customerId;
         this.item = item;
         this.finalPriceCents = finalPriceCents;
     }
 
     //chef cook 1 unit, the last unit make the order READY
     public void updateUnit(){
+         if (!canBePrepared()) {
+        throw new IllegalStateException(
+            "Order cannot be prepared in status: " + status
+        );
+    }
+
+    if (unitsCompleted >= getUnitsTotal()) {
+        throw new IllegalStateException(
+            "All preparation units are already completed."
+        );
+    }
+
+    
         unitsCompleted++;
         status = (unitsCompleted >= getUnitsTotal()) ? OrderStatus.READY : OrderStatus.PREPARING;
     }
@@ -36,6 +51,7 @@ public class Order{
     }
 
     public int getOrderId(){return orderId;}
+    public int getCustomerId(){return customerId;}
     public MenuItem getItem(){return item;}
     public int getUnitsTotal(){return item.getPreparationUnits();}
     public int getUnitsCompleted(){return unitsCompleted;}

@@ -1,5 +1,7 @@
 package staff;
 
+import controller.CustomerController;
+import controller.OrderController;
 import controller.PricingController;
 import controller.SeatingController;
 import entity.Customer;
@@ -13,11 +15,16 @@ import entity.Order;
 public class Waiter{
     private final SeatingController seatingController;
     private final PricingController pricingController;
+    private final OrderController orderController;
+    private  final CustomerController customerController;
+
     private int lastTaskTurn = 0;
 
-    public Waiter(SeatingController seatingController, PricingController pricingController){
+    public Waiter(SeatingController seatingController, PricingController pricingController,OrderController orderController, CustomerController customerController){
         this.seatingController = seatingController;
         this.pricingController = pricingController;
+        this.orderController = orderController;
+        this.customerController = customerController;
     }
 
     //seating
@@ -60,34 +67,64 @@ public class Waiter{
 
         MenuItem item = customer.chooseMenuItem(menu.getItems());
         int priceCents = pricingController.calculateBill(customer, item);
-        customer.setOrder(new Order(customer.getCustomerId(), item, priceCents));
+        Order order = new Order(orderController.getTotalOrderCount()+1,customer.getCustomerId(), item, priceCents);
+
+        customer.setOrder(order);
+        orderController.addOrder(order);
+        
         lastTaskTurn = turn;
         return true;
     }
 
     //serve
-    public boolean serve(Customer customer, int turn){
-        checkFreeThisTurn(turn);
-        
-        if(customer == null){
-            throw new InvalidActionException("Invalid customer.");
-        }
+    
+public boolean serve(int customerId, int turn) {
 
-        Order order = customer.getOrder();
-        if(order == null){
-            throw new InvalidActionException("Customer " + customer.getCustomerId() + " has not ordered yet.");
-        }
+    checkFreeThisTurn(turn);
 
-        if(!order.isReady()){
-            throw new InvalidActionException("Order for customer " + customer.getCustomerId()
-                    + " is not ready (status " + order.getStatus() + ").");
-        }
+    // Find the customer selected by the manager
+    Customer customer =
+        customerController.getCustomerById(customerId);
 
-        order.markServed();
-        customer.markServed(turn);
-        lastTaskTurn = turn;
-        return true;
+    if (customer == null) {
+        throw new InvalidActionException("Customer not found.");
     }
+
+    if (customer.getStatus() != CustomerStatus.SEATED) {
+        throw new InvalidActionException(
+            "Customer is not seated."
+        );
+    }
+
+    // Retrieve the customer's order
+    Order order = customer.getOrder();
+
+    if (order == null) {
+        throw new InvalidActionException(
+            "Customer has not placed an order."
+        );
+    }
+
+    if (!order.isReady()) {
+        throw new InvalidActionException(
+            "Order is not READY."
+        );
+    }
+
+   
+
+    // Mark customer as EATING and order as SERVED
+    customer.markServed(turn);
+
+    // Remove the selected order from the ready queue
+    orderController.getAllReadyOrder().remove(order);
+
+    // Record Waiter's completed task
+    lastTaskTurn = turn;
+
+    return true;
+}
+
 
     public boolean hasActedThisTurn(int turn){
         return lastTaskTurn == turn;

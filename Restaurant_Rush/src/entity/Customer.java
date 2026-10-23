@@ -9,6 +9,7 @@ import java.util.Objects;
  */
 public abstract class Customer {
     private final int customerId;
+    private CustomerType customerType;
     private int satisfaction;
     private CustomerStatus status;
     private Order order;
@@ -16,7 +17,7 @@ public abstract class Customer {
     private int readyToPayTurn;
     private final int waitingPenalty;
 
-    public Customer(int id, int waitingPenalty) {
+    public Customer(int id, CustomerType customerType, int waitingPenalty) {
         if (id <= 0) {
             throw new IllegalArgumentException("Customer ID must be positive.");
         }
@@ -24,6 +25,7 @@ public abstract class Customer {
             throw new IllegalArgumentException("Waiting penalty must be positive.");
         }
         this.customerId = id;
+        this.customerType = customerType;
         this.waitingPenalty = waitingPenalty;
         this.satisfaction = 100;
         this.status = CustomerStatus.WAITING;
@@ -66,8 +68,12 @@ public abstract class Customer {
         return satisfaction;
     }
 
-    public int getCustomerId() {
+    public int getCustomerId () {
         return customerId;
+    }
+
+    public CustomerType getCustomerType() {
+        return customerType;
     }
 
     public int getSatisfaction() {
@@ -104,19 +110,21 @@ public abstract class Customer {
      * Keeps customer and order states consistent. Also accepts an order that
      * Waiter has already marked SERVED immediately before this call.
      */
-    public void markServed(int turn) {
-        requirePositiveTurn(turn);
+     public void markServed(int turn) {
+         requirePositiveTurn(turn);
         require(status == CustomerStatus.SEATED && order != null,
-                "Customer must be seated with an order before serving.");
+                 "Customer must be seated with an order before serving.");
         require(order.getStatus() == OrderStatus.READY
-                        || order.getStatus() == OrderStatus.SERVED,
-                "Food must be READY before serving.");
-        if (order.getStatus() == OrderStatus.READY) {
-            order.markServed();
-        }
+                         || order.getStatus() == OrderStatus.SERVED,
+                 "Food must be READY before serving.");
+         if (order.getStatus() == OrderStatus.READY) {
+             order.markServed();
+       }
         servedTurn = turn;
-        status = CustomerStatus.EATING;
-    }
+         status = CustomerStatus.EATING;
+     }
+
+  
 
     /** Served on turn s -> ready to pay on turn s+1, not on turn s. */
     public void finishEating(int turn) {
@@ -172,6 +180,7 @@ public abstract class Customer {
     public int getReadyToPayTurn() {
         return readyToPayTurn;
     }
+
 
     public boolean isWaitingForService() {
         return status == CustomerStatus.WAITING || status == CustomerStatus.SEATED;

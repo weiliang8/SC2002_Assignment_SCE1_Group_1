@@ -58,17 +58,21 @@ public class GameController {
         //creating waiter
         SeatingController seatingController = new SeatingController(restaurant);
         PricingController pricingController = new PricingController();
-        Waiter waiter = new Waiter(seatingController, pricingController);
+        
+        OrderController orderController = new OrderController();
+        
+        CustomerController customerController = new CustomerController(restaurant, seatingController);
+        
+        //creating waiter 
+        Waiter waiter = new Waiter(seatingController, pricingController,orderController,customerController);
 
         //creating chef
-        Chef chef = new Chef();
+        Chef chef = new Chef(orderController);
 
         //creating cashier
         Cashier cashier = new Cashier(restaurant, seatingController);
 
-        //create customer controller 
-        CustomerController customerController = new CustomerController(restaurant, seatingController);
-        this.turnController = new TurnController(restaurant, customerController, waiter, chef, cashier, gameApp);
+        this.turnController = new TurnController(restaurant, customerController, orderController,waiter, chef, cashier,gameApp);
         runGame();
 
         
@@ -88,7 +92,7 @@ public class GameController {
 
     public GameResult checkResult(){
         RestaurantStatistics stats = restaurant.getStatistics();
-        if(stats.getPaidCustomerCount() < 4 || stats.getRevenueCents() < 45 || stats.getAverageSatisfaction() < 60){
+        if(stats.getPaidCustomerCount() < 4 || stats.getRevenueCents() < 4500 || stats.getAverageSatisfaction() < 60){
             return GameResult.DEFEAT;
         }
         return GameResult.VICTORY;
