@@ -87,6 +87,7 @@ public class TurnController {
                     case SEAT -> {
                         int id = gameApp.getWaiterSeatCustomerId(restaurant);
                         if (id == -1) {
+                            //System.out.println("\u001B[4mEnter valid customer ID\u001B[0m");
                             continue;
                         }
 
@@ -101,6 +102,7 @@ public class TurnController {
                     case TAKE_ORDER -> {
                         int id = gameApp.getTakeOrderCustomerId(restaurant);
                         if (id == -1) {
+                            //System.out.println("\u001B[4mEnter valid customer ID\u001B[0m");
                             continue;
                         }
 
@@ -116,6 +118,7 @@ public class TurnController {
                     case SERVE -> {
                         int id = gameApp.getServeCustomerId(restaurant);
                         if (id == -1) {
+                            //System.out.println("\u001B[4mEnter valid customer ID\u001B[0m");
                             continue;
                         }
 
@@ -164,16 +167,16 @@ public class TurnController {
                         if (chef.prepareOneUnit(order, currentTurn)) {
 
                             System.out.printf(
-                                    "Chef prepared Order %d (%s)%n",
+                                    "\nChef prepared Order %d (%s)%n",
                                     order.getOrderId(),
                                     order.getItem().getName());
 
                             System.out.printf(
-                                    "Progress: %d/%d | Status: %s%n",
+                                    "Progress: %d/%d | Status: %s%n%n",
                                     order.getUnitsCompleted(),
                                     order.getUnitsTotal(),
                                     order.getStatus());
-
+                            
                             return; // End Chef phase
                         }
 
@@ -184,7 +187,7 @@ public class TurnController {
                 }
 
                 case 2 -> {
-                    System.out.println("Chef waits this turn.");
+                    System.out.println("Chef waits this turn.\n");
                     return;
                 }
             }

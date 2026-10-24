@@ -24,22 +24,27 @@ public class GameApp {
         GameApp gameApp = new GameApp(scanner);
         GameController gameController = new GameController(gameApp);
 
+        
         gameController.startGame();
         gameController.endGame();
         scanner.close();
-
+        
+        
     }
-
+    public Scanner getScanner(){
+        return scanner;
+    }
     public void displayTurn(Restaurant restaurant, int currentTurn) {
         // displays current turn
         RestaurantStatistics stats = restaurant.getStatistics();
         System.out.printf("----------------------------Turn %d----------------------------\n", currentTurn);
         // Print revenue right now
         int revenue = stats.getRevenueCents();
-        System.out.printf("Your revenue as of now is : $ %d\n", revenue);
+        float revenue_in_dollars = revenue / 100;
+        System.out.printf("Your revenue as of now is : $%.2f\n", revenue_in_dollars);
         // Print average satisfaction (or N/A)
         double avg_satisfaction = stats.getAverageSatisfaction();
-        System.out.printf("Your average satisfaction is %.2f\n", avg_satisfaction);
+        System.out.printf("Your average satisfaction among paid customers are %.2f\n\n", avg_satisfaction);
 
         System.out.println("--- Waiting Queue ---");
         for (Customer customer : restaurant.getCustomers()) {
@@ -47,17 +52,21 @@ public class GameApp {
                 System.out.println("Customer " + customer.getCustomerId());
             }
         }
-        System.out.println("--- Customer and Order Status ---");
+        
+        System.out.println("\n--- Customer and Order Status ---");
 
         for (Customer customer : restaurant.getCustomers()) {
             String orderStatus = customer.getOrder() == null? "NO ORDER": customer.getOrder().getStatus().toString();
             System.out.printf(
-                    "Customer %d | %s | Satisfaction: %d | Order: %s%n",
+                    "Customer %d : {Customer ID: %d | Customer Status: %s | Satisfaction: %d | Order Status: %s}%n",
+                    customer.getCustomerId(),
                     customer.getCustomerId(),
                     customer.getStatus(),
                     customer.getSatisfaction(),
                     orderStatus);
         }
+        
+        System.out.println("\n---Table Availability---");
 
         // Print Occupied Tables
         List<Table> tables = restaurant.getTables();
@@ -70,19 +79,26 @@ public class GameApp {
             }
         }
 
-        // Each customer's satisfaction
+        System.out.print("\n");
+    }
+
+        // Each customer's satisfaction ==> Venka: Already in customer n order status, i feel like dn, if needed can uncomment (Project doc say need this part though)
+        /* 
         List<Customer> customers = restaurant.getCustomers();
         for (Customer customer : customers) {
             System.out.printf("Customer %d's satisfaction scores: %d\n", customer.getCustomerId(),
                     customer.getSatisfaction());
         }
-
+        System.out.print("\n");
        }
+
+       TODO: Stil need "What are the staff tasks avaliable according to proj requirements"
+        */
 
     public WaiterAction getWaiterAction() {
         // get waiteraction
         while (true) {
-            System.out.println("What would you like the waiter to do?\n");
+            System.out.println("\n\u001b[4mWhat would you like the waiter to do?\u001b[0m");
             System.out.println("1: Seat a customer in the queue");
             System.out.println("2. Take an order from customer");
             System.out.println("3. Serve food to customer");
@@ -120,16 +136,18 @@ public class GameApp {
             if (customer.getStatus() == CustomerStatus.WAITING) {
 
                 System.out.println(
-                        "Customer " + customer.getCustomerId() + customer.getCustomerType()
+                        "Customer " + customer.getCustomerId() + ": {ID: " + customer.getCustomerId() 
+                                + " | Customer Type: " + customer.getCustomerType()
                                 + " | Satisfaction: "
-                                + customer.getSatisfaction());
+                                + customer.getSatisfaction() + "}");
 
                 hasWaitingCustomer = true;
             }
         }
+        System.out.println();
 
         if (!hasWaitingCustomer) {
-            System.out.println("No customers waiting.");
+            System.out.println("No customers waiting. Choose another option.");
             return -1;
         }
 
@@ -141,7 +159,12 @@ public class GameApp {
             System.out.print("Enter Customer ID to seat: ");
         }
 
-        return scanner.nextInt();
+        int Id = scanner.nextInt();
+        scanner.nextLine();
+        if(Id == -1){
+            return -2;
+        }
+        return Id;
     }
 
     public int getTakeOrderCustomerId(Restaurant restaurant) {
@@ -156,15 +179,18 @@ public class GameApp {
                     && customer.getOrder() == null) {
 
                 System.out.println(
-                        "Customer " + customer.getCustomerId() + customer.getCustomerType()
-                                + " | Satisfaction: " + customer.getSatisfaction());
+                        "Customer " + customer.getCustomerId() + ": {Customer ID: " + customer.getCustomerId() 
+                                + " | Customer Type: " + customer.getCustomerType()
+                                + " | Satisfaction: "
+                                + customer.getSatisfaction() + "}");
 
                 found = true;
             }
         }
+        System.out.println();
 
         if (!found) {
-            System.out.println("No customers available to order.");
+            System.out.println("No customers available to order. Please choose another option.");
             return -1;
         }
 
@@ -176,7 +202,13 @@ public class GameApp {
             System.out.print("Enter Customer ID to take order: ");
         }
 
-        return scanner.nextInt();
+        int Id = scanner.nextInt();
+        scanner.nextLine();
+        if(Id == -1){
+            return -2;
+        }
+        return Id;
+        
     }
 
     public int getServeCustomerId(Restaurant restaurant) {
@@ -194,29 +226,35 @@ public class GameApp {
                     && order.isReady()) {
 
                 System.out.println(
-                        "Customer " + customer.getCustomerId()
-                                + " | " + customer.getCustomerType()
-                                + " | Order " + order.getOrderId()
-                                + " | " + order.getItem().getName()
-                                + " | READY");
+                        "Customer " + customer.getCustomerId() + ": {Customer ID: " + customer.getCustomerId()
+                                + " | Customer Type: " + customer.getCustomerType()
+                                + " | Order ID: " + order.getOrderId()
+                                + " | Food Item: " + order.getItem().getName()
+                                + " | Order Status: READY}");
 
                 found = true;
             }
         }
+        System.out.println();
 
         if (!found) {
-            System.out.println("No READY orders to serve.");
+            System.out.println("No READY orders to serve. Please choose another option.");
             return -1;
         }
 
         System.out.print("Enter Customer ID to serve: ");
-        return scanner.nextInt();
+        int Id = scanner.nextInt();
+        scanner.nextLine();
+        if(Id == -1){
+            return -2;
+        }
+        return Id;
     }
 
     public int getChefChoice() {
         // choose what chef does
         while (true) {
-            System.out.println("What would you like the chef to do?\n");
+            System.out.println("\n\u001B[4mWhat would you like the chef to do?\u001B[0m");
             System.out.println("1: Prepare one unit of an order");
             System.out.println("2. Wait\n");
 
@@ -240,21 +278,21 @@ public class GameApp {
         System.out.println("\n--- PENDING ORDERS ---");
 
         if (pendingOrders.isEmpty()) {
-            System.out.println("No pending orders to prepare.");
+            System.out.println("No pending orders to prepare. Chef can only wait.");
             return -1;
         }
 
         // Display available orders
         for (Order order : pendingOrders) {
             System.out.printf(
-                    "Order %d | Customer %d | %s | %d/%d units%n",
+                    "{Order ID: %d | Customer ID: %d | FOOD ITEM: %s | PROGRESS: %d/%d units}%n",
                     order.getOrderId(),
                     order.getCustomerId(),
                     order.getItem().getName(),
                     order.getUnitsCompleted(),
                     order.getUnitsTotal());
         }
-
+        System.out.println("-----------------------");
         System.out.print("Enter Order ID to prepare: ");
 
         while (!scanner.hasNextInt()) {
@@ -262,8 +300,13 @@ public class GameApp {
             scanner.next();
             System.out.print("Enter Order ID to prepare: ");
         }
-
-        return scanner.nextInt();
+        
+        int Id = scanner.nextInt();
+        scanner.nextLine();
+        if(Id == -1){
+            return -2;
+        }
+        return Id;
     }
 
     /*
@@ -283,23 +326,25 @@ public class GameApp {
         System.out.println("----------------------------Turn Summary----------------------------");
         // 1. Print served count
         int serve_count = stats.getServedCustomerCount();
-        System.out.printf("You have served %d customers.\n", serve_count);
+        System.out.printf("You have served \u001B[4m%d customers.\u001B[0m\n", serve_count);
         // 2. Print unhappy departures
         int unhappy_departures = stats.getUnhappyDepartureCustomerCount();
-        System.out.printf("You had %d unhappy customers as of latest turn.\n", unhappy_departures);
+        System.out.printf("You had \u001B[4m%d unhappy customers\u001B[0m as of latest turn.\n", unhappy_departures);
         // 3. Print revenue
         int revenue = stats.getRevenueCents();
-        System.out.printf("Your revenue as of now is : $ %d\n", revenue);
+        float revenue_in_dollars = revenue / 100;
+        System.out.printf("Your revenue as of now is : \u001B[4m$%.2f\u001B[0m\n", revenue_in_dollars);
         // 4. Print average satisfaction (or N/A)
         double avg_satisfaction = stats.getAverageSatisfaction();
-        System.out.printf("Your average satisfaction is %.2f\n", avg_satisfaction);
+        System.out.printf("Your average satisfaction among paid customers are \u001B[4m%.2f\u001B[0m\n", avg_satisfaction);
         // 5. Print turns used
-        System.out.printf("You have used up %d turns.\n", currentTurn);
+        System.out.printf("You have used up \u001B[4m%d turns\u001B[0m.\n", currentTurn);
+        System.out.println("--------------------------------------------------------------------\n");
     }
 
     public void displayStaffAvailability(boolean waiterAvailable, boolean chefAvailable, boolean cashierAvailable) {
 
-        System.out.println("\n--- STAFF AVAILABILITY ---");
+        System.out.println("--- STAFF AVAILABILITY ---");
         System.out.println("Waiter  : " + (waiterAvailable ? "AVAILABLE" : "DONE"));
         System.out.println("Chef    : " + (chefAvailable ? "AVAILABLE" : "DONE"));
         System.out.println("Cashier : " + (cashierAvailable ? "AVAILABLE" : "DONE"));
@@ -312,7 +357,7 @@ public class GameApp {
             System.out.println("Congratulations!!! You have successfully ran the restaurant!!!\n\n");
         } else {
             System.out.println(
-                    "Sorry you have not successfully succedded running this restaurant.\nBetter luck next time!\n\n");
+                    "Sorry you have not succedded running this restaurant.\nBetter luck next time!\n\n");
         }
         RestaurantStatistics stats = restaurant.getStatistics();
 
@@ -326,8 +371,8 @@ public class GameApp {
             System.out.println("Average satisfaction: N/A");
         } else {
             System.out.printf("Average satisfaction: %.2f%n", stats.getAverageSatisfaction());
-            System.out.println("-----------------------------------------------------------------\n");
         }
+        System.out.println("-----------------------------------------------------------------\n");
     }
 
     private int readInt(String prompt) {

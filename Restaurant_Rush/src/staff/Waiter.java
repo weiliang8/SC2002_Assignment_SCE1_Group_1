@@ -32,16 +32,26 @@ public class Waiter{
         checkFreeThisTurn(turn);
 
         if(customer == null){
-            throw new InvalidActionException("Invalid customer.");
+            throw new InvalidActionException("Invalid customer. Enter valid ID.");
         }
+
 
         if(customer.getStatus() != CustomerStatus.WAITING){
-            throw new InvalidActionException("Customer " + customer.getCustomerId() + " is not in the queue.");
+            if(customer.getStatus() == CustomerStatus.SEATED ||
+                customer.getStatus() == CustomerStatus.EATING ||
+                customer.getStatus() == CustomerStatus.READY_TO_PAY){
+                    throw new InvalidActionException("Customer " + customer.getCustomerId() + " is already seated.");
+                }
+            else{
+                throw new InvalidActionException("Customer " + customer.getCustomerId() + " is not in the queue.");
+            }
+            
+        }
+        if(seatingController.findAvailableTable() == null){
+            throw new InvalidActionException("No free table. Try another option.");
         }
 
-        if(seatingController.findAvailableTable() == null){
-            throw new InvalidActionException("No free table.");
-        }
+        
 
         seatingController.assignSeat(customer);
         customer.markSeated();
@@ -54,16 +64,22 @@ public class Waiter{
         checkFreeThisTurn(turn);
 
         if(customer == null){
-            throw new InvalidActionException("Invalid customer.");
+            throw new InvalidActionException("Invalid customer. Enter Valid ID");
         }
-
+        if(customer.getStatus() == CustomerStatus.PAID){
+            throw new InvalidActionException("Customer " + customer.getCustomerId() + " has already paid and left the restaurant.");
+        }
+        if(customer.getStatus() == CustomerStatus.LEFT){
+            throw new InvalidActionException("Customer " + customer.getCustomerId() + " has already left the restaurant without paying.");
+        }
+        if(customer.getOrder() != null){
+            throw new InvalidActionException("Customer " + customer.getCustomerId() + " has already ordered.");
+        }
         if(customer.getStatus() != CustomerStatus.SEATED){
             throw new InvalidActionException("Customer " + customer.getCustomerId() + " is not seated.");
         }
 
-        if(customer.getOrder() != null){
-            throw new InvalidActionException("Customer " + customer.getCustomerId() + " has already ordered.");
-        }
+        
 
         MenuItem item = customer.chooseMenuItem(menu.getItems());
         int priceCents = pricingController.calculateBill(customer, item);
@@ -87,10 +103,20 @@ public boolean serve(int customerId, int turn) {
         customerController.getCustomerById(customerId);
 
     if (customer == null) {
-        throw new InvalidActionException("Customer not found.");
+        throw new InvalidActionException("Customer not found. Enter Valid ID");
     }
-
-    if (customer.getStatus() != CustomerStatus.SEATED) {
+    if(customer.getStatus() == CustomerStatus.PAID){
+            throw new InvalidActionException("Customer " + customer.getCustomerId() + " has already paid and left the restaurant.");
+        }
+    if(customer.getStatus() == CustomerStatus.LEFT){
+        throw new InvalidActionException("Customer " + customer.getCustomerId() + " has already left the restaurant without paying.");
+    }
+    if(customer.getStatus() == CustomerStatus.EATING || customer.getStatus() == CustomerStatus.READY_TO_PAY){
+        throw new InvalidActionException(
+            "Customer is already seated."
+        );
+    }
+    if (customer.getStatus() == CustomerStatus.WAITING) {
         throw new InvalidActionException(
             "Customer is not seated."
         );
