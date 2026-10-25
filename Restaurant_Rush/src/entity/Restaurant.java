@@ -107,6 +107,52 @@ public class Restaurant {
         return statistics;
     }
 
+    public int getWaitingQueueSize(){
+        return waitingQueue.size();
+    }
+
+    public boolean hasFreeTable(){
+        int no_of_table_seats_avaliable = 2;
+        for(Table t: tables){
+            if(!t.isFree()){
+                no_of_table_seats_avaliable -= 1;
+            }
+            if(no_of_table_seats_avaliable == 0){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean hasSeatedWithoutOrder(){
+        for(Customer c : customers){
+            if(c.getStatus() == CustomerStatus.SEATED && c.getOrder() == null){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasReadyOrder(){
+        for(Customer c: customers){
+            Order o = c.getOrder();
+            if(c.getStatus() == CustomerStatus.SEATED && o != null && o.getStatus() == OrderStatus.READY){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasOrderToPrepare(){
+        for(Customer c: customers){
+            Order o = c.getOrder();
+            if(o != null && (o.getStatus() == OrderStatus.ORDERED || o.getStatus() == OrderStatus.PREPARING)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** Records a customer's first successful serving event. */
     public void recordServed(Customer customer) {
         requireRegistered(customer);

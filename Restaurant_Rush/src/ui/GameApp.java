@@ -8,6 +8,7 @@ import entity.Order;
 import entity.Restaurant;
 import entity.RestaurantStatistics;
 import entity.Table;
+//import staff.Waiter;
 import staff.WaiterAction;
 import entity.Customer;
 import entity.CustomerStatus;
@@ -108,8 +109,6 @@ public class GameApp {
      * System.out.print("\n");
      * }
      * 
-     * TODO: Stil need
-     * "What are the staff tasks avaliable according to proj requirements"
      */
 
     public WaiterAction getWaiterAction() {
@@ -358,14 +357,70 @@ public class GameApp {
         System.out.printf("You have used up \u001B[4m%d turns\u001B[0m.\n", currentTurn);
         System.out.println("--------------------------------------------------------------------\n");
     }
-
+    /* 
     public void displayStaffAvailability(boolean waiterAvailable, boolean chefAvailable, boolean cashierAvailable) {
-
+        
         System.out.println("--- STAFF AVAILABILITY ---");
         System.out.println("Waiter  : " + (waiterAvailable ? "AVAILABLE" : "DONE"));
         System.out.println("Chef    : " + (chefAvailable ? "AVAILABLE" : "DONE"));
         System.out.println("Cashier : " + (cashierAvailable ? "AVAILABLE" : "DONE"));
+        
     }
+    */
+   public void displayStaffTasks(int turn, Restaurant restaurant){
+        System.out.printf("--- STAFF TASKS AVALIABLE (TURN %d) ---\n\n", turn);
+        displayWaiterTasks(restaurant);
+        displayChefTasks(restaurant);
+        displayCashierTasks(turn, restaurant);
+        System.out.println("--------------------------------------\n");
+   }
+
+
+    public void displayWaiterTasks(Restaurant restaurant){
+        int option = 0;
+        System.out.print("--- WAITER'S AVALIABLE TASKS ---\n");
+        if(restaurant.getWaitingQueueSize() > 0 && restaurant.hasFreeTable()){
+            option++;
+            System.out.printf("%d. \u001B[4mSeat a customer in the queue\u001B[0m\n", option);
+        }
+        if(restaurant.hasSeatedWithoutOrder()){
+            option++;
+            System.out.printf("%d. \u001B[4mTake an order from customer\u001B[0m\n", option);
+        }
+        if(restaurant.hasReadyOrder()){
+            option++;
+            System.out.printf("%d. \u001B[4mServe food to customer\u001B[0m\n", option);
+        }
+        option++;
+        System.out.printf("%d. \u001B[4mWait\n\u001B[0m", option);
+        System.out.println();
+    }
+
+    public void displayChefTasks(Restaurant restaurant){
+        int option = 0;
+        System.out.print("--- CHEF'S AVAILABLE TASKS ---\n");
+        if(restaurant.hasOrderToPrepare()){
+            option++;
+            System.out.printf("%d. \u001B[4mPrepare one unit of an order\u001B[0m\n", option);
+        }
+        option++;
+        System.out.printf("%d. \u001B[4mWait\n\n\u001B[0m", option);
+    }
+
+    public void displayCashierTasks(int turn, Restaurant restaurant){
+        System.out.print("--- CASHIER'S CURRENT TASK (AUTO)---\n");
+        Customer payer = restaurant.getOldestReadyPayer(turn);
+            if(payer == null){
+                System.out.println("Action: \u001B[4mCashier will not process any payments at the end of the turn\u001B[0m");
+            }
+            else{
+                float dollars = (payer.getOrder().getFinalPriceCents() / 100);
+                System.out.printf("Action: \u001B[4mCashier will process payment $%.2f from Customer %d at the end of the turn\n", dollars, payer.getCustomerId());
+            }
+            System.out.println();
+        }
+        
+    
 
     public void displayResult(GameResult result, Restaurant restaurant) {
         // prints out final result

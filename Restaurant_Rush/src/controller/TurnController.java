@@ -42,13 +42,17 @@ public class TurnController {
         // 2. Display updated game state
         displayState(currentTurn);
 
-        gameApp.displayStaffAvailability(
-                !waiter.hasActedThisTurn(currentTurn),
-                !chef.hasActedThisTurn(currentTurn),
-                !cashier.hasActedThisTurn(currentTurn));
+        //gameApp.displayStaffAvailability(
+        //       !waiter.hasActedThisTurn(currentTurn),
+        //        !chef.hasActedThisTurn(currentTurn),
+        //        !cashier.hasActedThisTurn(currentTurn));
+        gameApp.displayStaffTasks(currentTurn, restaurant);
 
         // 3. Staff actions
         runWaiterPhase(currentTurn);
+        System.out.println();
+        gameApp.displayChefTasks(restaurant);
+        System.out.println("------------------------------");
         runChefPhase(currentTurn);
 
         // 4. Eating and payment
