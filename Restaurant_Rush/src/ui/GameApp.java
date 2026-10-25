@@ -24,27 +24,32 @@ public class GameApp {
         GameApp gameApp = new GameApp(scanner);
         GameController gameController = new GameController(gameApp);
 
-        
         gameController.startGame();
         gameController.endGame();
         scanner.close();
-        
-        
+
     }
-    public Scanner getScanner(){
+
+    public Scanner getScanner() {
         return scanner;
     }
+
     public void displayTurn(Restaurant restaurant, int currentTurn) {
         // displays current turn
         RestaurantStatistics stats = restaurant.getStatistics();
-        System.out.printf("----------------------------Turn %d----------------------------\n", currentTurn);
+        System.out.printf("-------------------------------Turn %d--------------------------------\n", currentTurn);
         // Print revenue right now
         int revenue = stats.getRevenueCents();
         float revenue_in_dollars = revenue / 100;
         System.out.printf("Your revenue as of now is : $%.2f\n", revenue_in_dollars);
         // Print average satisfaction (or N/A)
         double avg_satisfaction = stats.getAverageSatisfaction();
-        System.out.printf("Your average satisfaction among paid customers are %.2f\n\n", avg_satisfaction);
+
+        if (stats.getPaidCustomerCount() == 0) {
+            System.out.printf("Your average satisfaction among paid customers are N/A\n\n");
+        } else {
+            System.out.printf("Your average satisfaction among paid customers are %.2f\n\n", avg_satisfaction);
+        }
 
         System.out.println("--- Waiting Queue ---");
         for (Customer customer : restaurant.getCustomers()) {
@@ -52,20 +57,21 @@ public class GameApp {
                 System.out.println("Customer " + customer.getCustomerId());
             }
         }
-        
-        System.out.println("\n--- Customer and Order Status ---");
+
+        System.out.println("\n--- Overall Customer and Order Status ---");
 
         for (Customer customer : restaurant.getCustomers()) {
-            String orderStatus = customer.getOrder() == null? "NO ORDER": customer.getOrder().getStatus().toString();
+            String orderStatus = customer.getOrder() == null ? "NO ORDER" : customer.getOrder().getStatus().toString();
             System.out.printf(
-                    "Customer %d : {Customer ID: %d | Customer Status: %s | Satisfaction: %d | Order Status: %s}%n",
+                    "Customer %d : {Customer ID: %d | Customer Type: %s | Customer Status: %s | Satisfaction: %d | Order Status: %s}%n",
                     customer.getCustomerId(),
                     customer.getCustomerId(),
+                    customer.getCustomerType().toString(),
                     customer.getStatus(),
                     customer.getSatisfaction(),
                     orderStatus);
         }
-        
+
         System.out.println("\n---Table Availability---");
 
         // Print Occupied Tables
@@ -82,24 +88,27 @@ public class GameApp {
         System.out.print("\n");
     }
 
-        // Each customer's satisfaction ==> Venka: Already in customer n order status, i feel like dn, if needed can uncomment (Project doc say need this part though)
-        /* 
-        List<Customer> customers = restaurant.getCustomers();
-        for (Customer customer : customers) {
-            System.out.printf("Customer %d's satisfaction scores: %d\n", customer.getCustomerId(),
-                    customer.getSatisfaction());
-        }
-        System.out.print("\n");
-       }
-
-       TODO: Stil need "What are the staff tasks avaliable according to proj requirements"
-        */
+    // Each customer's satisfaction ==> Venka: Already in customer n order status, i
+    // feel like dn, if needed can uncomment (Project doc say need this part though)
+    /*
+     * List<Customer> customers = restaurant.getCustomers();
+     * for (Customer customer : customers) {
+     * System.out.printf("Customer %d's satisfaction scores: %d\n",
+     * customer.getCustomerId(),
+     * customer.getSatisfaction());
+     * }
+     * System.out.print("\n");
+     * }
+     * 
+     * TODO: Stil need
+     * "What are the staff tasks avaliable according to proj requirements"
+     */
 
     public WaiterAction getWaiterAction() {
         // get waiteraction
         while (true) {
             System.out.println("\n\u001b[4mWhat would you like the waiter to do?\u001b[0m");
-            System.out.println("1: Seat a customer in the queue");
+            System.out.println("1. Seat a customer in the queue");
             System.out.println("2. Take an order from customer");
             System.out.println("3. Serve food to customer");
             System.out.println("4. Wait\n");
@@ -136,7 +145,7 @@ public class GameApp {
             if (customer.getStatus() == CustomerStatus.WAITING) {
 
                 System.out.println(
-                        "Customer " + customer.getCustomerId() + ": {ID: " + customer.getCustomerId() 
+                        "Customer " + customer.getCustomerId() + ": {ID: " + customer.getCustomerId()
                                 + " | Customer Type: " + customer.getCustomerType()
                                 + " | Satisfaction: "
                                 + customer.getSatisfaction() + "}");
@@ -161,7 +170,7 @@ public class GameApp {
 
         int Id = scanner.nextInt();
         scanner.nextLine();
-        if(Id == -1){
+        if (Id == -1) {
             return -2;
         }
         return Id;
@@ -179,7 +188,7 @@ public class GameApp {
                     && customer.getOrder() == null) {
 
                 System.out.println(
-                        "Customer " + customer.getCustomerId() + ": {Customer ID: " + customer.getCustomerId() 
+                        "Customer " + customer.getCustomerId() + ": {Customer ID: " + customer.getCustomerId()
                                 + " | Customer Type: " + customer.getCustomerType()
                                 + " | Satisfaction: "
                                 + customer.getSatisfaction() + "}");
@@ -204,11 +213,11 @@ public class GameApp {
 
         int Id = scanner.nextInt();
         scanner.nextLine();
-        if(Id == -1){
+        if (Id == -1) {
             return -2;
         }
         return Id;
-        
+
     }
 
     public int getServeCustomerId(Restaurant restaurant) {
@@ -242,10 +251,9 @@ public class GameApp {
             return -1;
         }
 
-        System.out.print("Enter Customer ID to serve: ");
-        int Id = scanner.nextInt();
+        int Id = readInt("Enter Customer ID to serve: ");
         scanner.nextLine();
-        if(Id == -1){
+        if (Id == -1) {
             return -2;
         }
         return Id;
@@ -255,7 +263,7 @@ public class GameApp {
         // choose what chef does
         while (true) {
             System.out.println("\n\u001B[4mWhat would you like the chef to do?\u001B[0m");
-            System.out.println("1: Prepare one unit of an order");
+            System.out.println("1. Prepare one unit of an order");
             System.out.println("2. Wait\n");
 
             int choice = readInt("Enter your choice (1-2): ");
@@ -300,10 +308,10 @@ public class GameApp {
             scanner.next();
             System.out.print("Enter Order ID to prepare: ");
         }
-        
+
         int Id = scanner.nextInt();
         scanner.nextLine();
-        if(Id == -1){
+        if (Id == -1) {
             return -2;
         }
         return Id;
@@ -336,8 +344,9 @@ public class GameApp {
         System.out.printf("Your revenue as of now is : \u001B[4m$%.2f\u001B[0m\n", revenue_in_dollars);
         // 4. Print average satisfaction (or N/A)
         double avg_satisfaction = stats.getAverageSatisfaction();
-        System.out.printf("Your average satisfaction among paid customers are \u001B[4m%.2f\u001B[0m\n", avg_satisfaction);
-        // 5. Print turns used
+        System.out.printf(
+                "Your average satisfaction among paid customers is \u001B[4m%s\u001B[0m%n",
+                avg_satisfaction == -1 ? "N/A" : String.format("%.2f", avg_satisfaction)); // 5. Print turns used
         System.out.printf("You have used up \u001B[4m%d turns\u001B[0m.\n", currentTurn);
         System.out.println("--------------------------------------------------------------------\n");
     }
@@ -376,15 +385,17 @@ public class GameApp {
     }
 
     private int readInt(String prompt) {
-    while (true) {
-        System.out.print(prompt);
+        while (true) {
+            System.out.print(prompt);
 
-        if (scanner.hasNextInt()) {
-            return scanner.nextInt();
+            if (scanner.hasNextInt()) {
+                return scanner.nextInt();
+            }
+
+            System.out.println("Invalid input. Please enter a number.");
+            scanner.next(); // Discard invalid input
         }
-
-        System.out.println("Invalid input. Please enter a number.");
-        scanner.next(); // Discard invalid input
     }
-}
+
+    
 }

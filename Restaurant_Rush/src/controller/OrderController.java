@@ -16,8 +16,8 @@ public class OrderController {
     public void addOrder(Order order) {
         if (order != null) {
             pendingOrders.offer(order); //add element to tail of queue
+            totalOrderCount++;
         }
-        totalOrderCount++;
     }
 
     

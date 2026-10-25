@@ -53,7 +53,16 @@ public class TurnController {
 
         // 4. Eating and payment
         processEating(currentTurn);
-        processPayment(currentTurn);
+
+        Customer paymentCustomer = processPayment(currentTurn);
+        if (paymentCustomer == null) {
+            System.out.println("No customer ready for payment");
+            System.out.println("Cashier waits this turn.\n");
+        } else {
+            System.out.printf("Cashier processed Customer %d payment of $%.2f\n", paymentCustomer.getCustomerId(),
+                    paymentCustomer.getOrder().getFinalPriceCents() / 100.0);
+        }
+        ;
 
         // 5. Satisfaction loss and abandonment
         customerController.applySatisfactionLoss();
@@ -87,7 +96,7 @@ public class TurnController {
                     case SEAT -> {
                         int id = gameApp.getWaiterSeatCustomerId(restaurant);
                         if (id == -1) {
-                            //System.out.println("\u001B[4mEnter valid customer ID\u001B[0m");
+                            // System.out.println("\u001B[4mEnter valid customer ID\u001B[0m");
                             continue;
                         }
 
@@ -102,7 +111,7 @@ public class TurnController {
                     case TAKE_ORDER -> {
                         int id = gameApp.getTakeOrderCustomerId(restaurant);
                         if (id == -1) {
-                            //System.out.println("\u001B[4mEnter valid customer ID\u001B[0m");
+                            // System.out.println("\u001B[4mEnter valid customer ID\u001B[0m");
                             continue;
                         }
 
@@ -110,7 +119,14 @@ public class TurnController {
 
                         if (waiter.takeOrder(
                                 customer, restaurant.getMenu(), currentTurn)) {
-                            System.out.println("Order taken for Customer " + id);
+                            Order order = customer.getOrder();
+
+                            System.out.printf(
+                                    "Customer %d ordered %s (Order %d) - $%.2f%n",
+                                    id,
+                                    order.getItem().getName(),
+                                    order.getOrderId(),
+                                    order.getFinalPriceCents() / 100.0);
                             return;
                         }
                     }
@@ -118,7 +134,7 @@ public class TurnController {
                     case SERVE -> {
                         int id = gameApp.getServeCustomerId(restaurant);
                         if (id == -1) {
-                            //System.out.println("\u001B[4mEnter valid customer ID\u001B[0m");
+                            // System.out.println("\u001B[4mEnter valid customer ID\u001B[0m");
                             continue;
                         }
 
@@ -176,7 +192,7 @@ public class TurnController {
                                     order.getUnitsCompleted(),
                                     order.getUnitsTotal(),
                                     order.getStatus());
-                            
+
                             return; // End Chef phase
                         }
 
@@ -194,9 +210,9 @@ public class TurnController {
         }
     }
 
-    public void processPayment(int currentTurn) {
+    public Customer processPayment(int currentTurn) {
         // calls cashier to carry out
-        cashier.processPayment(currentTurn);
+        return cashier.processPayment(currentTurn);
     }
 
     public void processEating(int currentTurn) {

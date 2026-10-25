@@ -34,7 +34,7 @@ public class RestaurantStatistics {
     /** Returns 0.0 if no customers have paid; callers can display N/A in that case. */
     public double getAverageSatisfaction() {
         if (paidCustomerCount == 0) {
-            return 0.0;
+            return -1;
         }
         return (double) paidSatisfactionTotal / paidCustomerCount;
     }

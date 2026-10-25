@@ -17,11 +17,11 @@ public class Cashier{
         this.seatingController = seatingController;
     }
 
-    public boolean processPayment(int turn){
+    public Customer processPayment(int turn){
         checkFreeThisTurn(turn);
         Customer customer = restaurant.getOldestReadyPayer(turn);
         if(customer == null){
-            return false;
+            return null;
         }
 
         Order order = customer.getOrder();
@@ -31,7 +31,7 @@ public class Cashier{
         restaurant.recordPayment(customer, billCents);
         seatingController.releaseTable(customer);
         lastTaskTurn = turn;
-        return true;
+        return customer;
     }
 
         public boolean hasActedThisTurn(int turn){

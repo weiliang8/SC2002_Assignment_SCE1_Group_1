@@ -13,7 +13,7 @@ public class Restaurant {
     private static final int TABLE_COUNT = 2;
 
     private final Queue<Customer> waitingQueue;
-    private final List<Customer> customers; //stored all customer in
+    private final List<Customer> customers; // stored all customer in
     private final List<Table> tables;
     private final Menu menu;
     private final RestaurantStatistics statistics;
@@ -70,19 +70,26 @@ public class Restaurant {
         return waitingQueue.remove(customer);
     }
 
-    /** Returns the earliest registered customer who is eligible to pay this turn. */
-     public Customer getOldestReadyPayer(int turn) {
-         if (turn < 1) {
-             throw new IllegalArgumentException("Turn must be positive.");
-         }
-         for (Customer customer : customers) {
-             if (customer.canPay(turn)
-                     && !paidCustomers.contains(customer)) {
-                 return customer;
-             }
-         }
-         return null;
-     }
+    /**
+     * Returns the earliest registered customer who is eligible to pay this turn.
+     */
+    public Customer getOldestReadyPayer(int turn) {
+        Customer oldest = null;
+
+        for (Customer customer : customers) {
+
+            if (!customer.canPay(turn)
+                    || paidCustomers.contains(customer)) {
+                continue;
+            }
+
+            if (oldest == null || customer.getReadyToPayTurn() < oldest.getReadyToPayTurn()) {
+                oldest = customer;
+            }
+        }
+        return oldest;
+
+    }
 
     public List<Customer> getCustomers() {
         return Collections.unmodifiableList(customers);
@@ -108,7 +115,9 @@ public class Restaurant {
         }
     }
 
-    /** Records a payment once and snapshots the customer's satisfaction at payment. */
+    /**
+     * Records a payment once and snapshots the customer's satisfaction at payment.
+     */
     public void recordPayment(Customer customer, int cents) {
         requireRegistered(customer);
         if (cents < 0) {
@@ -129,7 +138,9 @@ public class Restaurant {
         paidCustomers.add(customer);
     }
 
-    /** Records an unhappy departure once and removes the customer from the queue. */
+    /**
+     * Records an unhappy departure once and removes the customer from the queue.
+     */
     public void recordDeparture(Customer customer) {
         requireRegistered(customer);
         removeCustomerFromQueue(customer);
@@ -151,18 +162,18 @@ public class Restaurant {
     }
 
     // public Customer getfirstWaitingCustomer() {
-    //     Customer dequeued_customer = waitingQueue.peek();
-    //     waitingQueue.remove();
-    //     return dequeued_customer;
+    // Customer dequeued_customer = waitingQueue.peek();
+    // waitingQueue.remove();
+    // return dequeued_customer;
     // }
 
     // public Customer getFirstSeatedCustomer() {
-    //     for (Customer customer : customers) {
-    //         if (customer.getStatus() == CustomerStatus.SEATED
-    //                 && customer.getOrder() == null) {
-    //             return customer;
-    //         }
-    //     }
-    //     return null;
+    // for (Customer customer : customers) {
+    // if (customer.getStatus() == CustomerStatus.SEATED
+    // && customer.getOrder() == null) {
+    // return customer;
+    // }
+    // }
+    // return null;
     // }
 }
