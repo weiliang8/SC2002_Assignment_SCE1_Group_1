@@ -79,7 +79,7 @@ public class TurnController {
 
     public void displayState(int currentTurn) {
         // decides when to display the turn, ie calls the gameapp.displayTurn
-        gameApp.displayTurn(restaurant, currentTurn);
+        gameApp.displayTurn(restaurant, currentTurn, orderController);
 
     }
 

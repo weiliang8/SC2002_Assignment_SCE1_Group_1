@@ -3,6 +3,7 @@ package ui;
 import java.util.List;
 import java.util.Scanner;
 import controller.GameController;
+import controller.OrderController;
 import entity.GameResult;
 import entity.Order;
 import entity.Restaurant;
@@ -35,7 +36,7 @@ public class GameApp {
         return scanner;
     }
 
-    public void displayTurn(Restaurant restaurant, int currentTurn) {
+    public void displayTurn(Restaurant restaurant, int currentTurn, OrderController orderController) {
         // displays current turn
         RestaurantStatistics stats = restaurant.getStatistics();
         System.out.printf("-------------------------------Turn %d--------------------------------\n", currentTurn);
@@ -79,6 +80,18 @@ public class GameApp {
                     customer.getStatus(),
                     customer.getSatisfaction(),
                     orderStatus);
+        }
+
+        System.out.println("\n--- Pending Orders ---");
+        if(orderController.getPendingOrders().isEmpty()){
+            System.out.println("\u001B[1bNO PENDING ORDERS\u001B[0m");
+        }
+        else{
+            for(Order order : orderController.getPendingOrders()){
+                System.out.printf("Order " + order.getOrderId() + ": {Order ID: " + order.getOrderId()
+                                + " | Food Item: " + order.getItem().getName()
+                                + " | Order Status: " + order.getStatus() + "}\n");
+            }
         }
 
         System.out.println("\n---Table Availability---");
