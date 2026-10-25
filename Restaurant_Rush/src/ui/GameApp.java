@@ -52,10 +52,18 @@ public class GameApp {
         }
 
         System.out.println("--- Waiting Queue ---");
-        for (Customer customer : restaurant.getCustomers()) {
+        List<Customer> waitingCustomers = restaurant.getCustomers();
+        boolean hasWaitingCustomer = false;
+
+        for (Customer customer : waitingCustomers) {
             if (customer.getStatus() == CustomerStatus.WAITING) {
                 System.out.println("Customer " + customer.getCustomerId());
+                hasWaitingCustomer = true;
             }
+        }
+
+        if (!hasWaitingCustomer) {
+            System.out.println("No Customer in waiting queue.");
         }
 
         System.out.println("\n--- Overall Customer and Order Status ---");
@@ -397,5 +405,4 @@ public class GameApp {
         }
     }
 
-    
 }
