@@ -42,7 +42,7 @@ public class GameApp {
         System.out.printf("-------------------------------Turn %d--------------------------------\n", currentTurn);
         // Print revenue right now
         int revenue = stats.getRevenueCents();
-        float revenue_in_dollars = revenue / 100;
+        double revenue_in_dollars = revenue / 100.0;
         System.out.printf("Your revenue as of now is : $%.2f\n", revenue_in_dollars);
         // Print average satisfaction (or N/A)
         double avg_satisfaction = stats.getAverageSatisfaction();
@@ -456,7 +456,7 @@ public class GameApp {
             }
             if(stats.getAverageSatisfaction() < 60.00){
                 reasons++;
-                if(stats.getAverageSatisfaction() == 0){
+                if(stats.getAverageSatisfaction() == -1){
                     System.out.printf("%d. You only have a average satisfaction score of N/A, but a minimum score of 60.00 is required.\n", reasons);
                 }
                 else{
