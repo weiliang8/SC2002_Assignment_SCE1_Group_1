@@ -463,8 +463,9 @@ public class GameApp {
                     System.out.printf("%d. You only have a average satisfaction score of %.2f, but a minimum score of 60.00 is required.\n", reasons, stats.getAverageSatisfaction());
                 }
             }
+            System.out.println("\nBetter luck next time!!!\n\n");
         }   
-        System.out.println("\nBetter luck next time!!!\n\n");
+
 
         System.out.printf("Turns played: %d%n", 18);
         System.out.printf("Customers served: %d%n", stats.getServedCustomerCount());
