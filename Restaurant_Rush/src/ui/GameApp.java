@@ -437,14 +437,34 @@ public class GameApp {
 
     public void displayResult(GameResult result, Restaurant restaurant) {
         // prints out final result
+        int reasons = 0;
+        RestaurantStatistics stats = restaurant.getStatistics();
         System.out.println("----------------------------GAME OVER----------------------------");
         if (result == GameResult.VICTORY) {
             System.out.println("Congratulations!!! You have successfully ran the restaurant!!!\n\n");
         } else {
             System.out.println(
-                    "Sorry you have not succedded running this restaurant.\nBetter luck next time!\n\n");
-        }
-        RestaurantStatistics stats = restaurant.getStatistics();
+                    "Sorry you have not succedded running this restaurant.\n");
+            System.out.println("\u001B[4mREASONS\u001B[0m");
+            if(stats.getPaidCustomerCount() < 4){
+                reasons++;
+                System.out.printf("%d. You only have %d paid customers, but a minimum of 4 paid customers are required.\n", reasons, stats.getPaidCustomerCount());
+            }
+            if(stats.getRevenueCents() < 4500){
+                reasons++;
+                System.out.printf("%d. You only had $%.2f in revenue, but a minimum revenue of $45.00 is required.\n", reasons, stats.getRevenueCents()/100.0);
+            }
+            if(stats.getAverageSatisfaction() < 60.00){
+                reasons++;
+                if(stats.getAverageSatisfaction() == 0){
+                    System.out.printf("%d. You only have a average satisfaction score of N/A, but a minimum score of 60.00 is required.\n", reasons);
+                }
+                else{
+                    System.out.printf("%d. You only have a average satisfaction score of %.2f, but a minimum score of 60.00 is required.\n", reasons, stats.getAverageSatisfaction());
+                }
+            }
+        }   
+        System.out.println("\nBetter luck next time!!!\n\n");
 
         System.out.printf("Turns played: %d%n", 18);
         System.out.printf("Customers served: %d%n", stats.getServedCustomerCount());
