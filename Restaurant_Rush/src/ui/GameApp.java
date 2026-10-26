@@ -360,7 +360,7 @@ public class GameApp {
         System.out.printf("You had \u001B[4m%d unhappy customers\u001B[0m as of latest turn.\n", unhappy_departures);
         // 3. Print revenue
         int revenue = stats.getRevenueCents();
-        float revenue_in_dollars = revenue / 100;
+        double revenue_in_dollars = revenue / 100.0;
         System.out.printf("Your revenue as of now is : \u001B[4m$%.2f\u001B[0m\n", revenue_in_dollars);
         // 4. Print average satisfaction (or N/A)
         double avg_satisfaction = stats.getAverageSatisfaction();
