@@ -83,14 +83,13 @@ public class GameApp {
         }
 
         System.out.println("\n--- Pending Orders ---");
-        if(orderController.getPendingOrders().isEmpty()){
-            System.out.println("\u001B[1bNO PENDING ORDERS\u001B[0m");
-        }
-        else{
-            for(Order order : orderController.getPendingOrders()){
+        if (orderController.getPendingOrders().isEmpty()) {
+            System.out.println("NO PENDING ORDERS");
+        } else {
+            for (Order order : orderController.getPendingOrders()) {
                 System.out.printf("Order " + order.getOrderId() + ": {Order ID: " + order.getOrderId()
-                                + " | Food Item: " + order.getItem().getName()
-                                + " | Order Status: " + order.getStatus() + "}\n");
+                        + " | Food Item: " + order.getItem().getName()
+                        + " | Order Status: " + order.getStatus() + "}\n");
             }
         }
 
@@ -370,70 +369,63 @@ public class GameApp {
         System.out.printf("You have used up \u001B[4m%d turns\u001B[0m.\n", currentTurn);
         System.out.println("--------------------------------------------------------------------\n");
     }
-    /* 
-    public void displayStaffAvailability(boolean waiterAvailable, boolean chefAvailable, boolean cashierAvailable) {
-        
-        System.out.println("--- STAFF AVAILABILITY ---");
-        System.out.println("Waiter  : " + (waiterAvailable ? "AVAILABLE" : "DONE"));
-        System.out.println("Chef    : " + (chefAvailable ? "AVAILABLE" : "DONE"));
-        System.out.println("Cashier : " + (cashierAvailable ? "AVAILABLE" : "DONE"));
-        
-    }
-    */
-   public void displayStaffTasks(int turn, Restaurant restaurant){
+
+    /*
+     * public void displayStaffAvailability(boolean waiterAvailable, boolean
+     * chefAvailable, boolean cashierAvailable) {
+     * 
+     * System.out.println("--- STAFF AVAILABILITY ---");
+     * System.out.println("Waiter  : " + (waiterAvailable ? "AVAILABLE" : "DONE"));
+     * System.out.println("Chef    : " + (chefAvailable ? "AVAILABLE" : "DONE"));
+     * System.out.println("Cashier : " + (cashierAvailable ? "AVAILABLE" : "DONE"));
+     * 
+     * }
+     */
+    public void displayStaffTasks(int turn, Restaurant restaurant) {
         System.out.printf("--- STAFF TASKS AVALIABLE (TURN %d) ---\n\n", turn);
         displayWaiterTasks(restaurant);
         displayChefTasks(restaurant);
         displayCashierTasks(turn, restaurant);
         System.out.println("--------------------------------------\n");
-   }
+    }
 
-
-    public void displayWaiterTasks(Restaurant restaurant){
-        int option = 0;
+    public void displayWaiterTasks(Restaurant restaurant) {
         System.out.print("--- WAITER'S AVALIABLE TASKS ---\n");
-        if(restaurant.getWaitingQueueSize() > 0 && restaurant.hasFreeTable()){
-            option++;
-            System.out.printf("%d. \u001B[4mSeat a customer in the queue\u001B[0m\n", option);
+        if (restaurant.getWaitingQueueSize() > 0 && restaurant.hasFreeTable()) {
+            System.out.printf("1. \u001B[4mSeat a customer in the queue\u001B[0m\n");
         }
-        if(restaurant.hasSeatedWithoutOrder()){
-            option++;
-            System.out.printf("%d. \u001B[4mTake an order from customer\u001B[0m\n", option);
+        if (restaurant.hasSeatedWithoutOrder()) {
+            System.out.printf("2. \u001B[4mTake an order from customer\u001B[0m\n");
         }
-        if(restaurant.hasReadyOrder()){
-            option++;
-            System.out.printf("%d. \u001B[4mServe food to customer\u001B[0m\n", option);
+        if (restaurant.hasReadyOrder()) {
+            System.out.printf("3. \u001B[4mServe food to customer\u001B[0m\n");
         }
-        option++;
-        System.out.printf("%d. \u001B[4mWait\n\u001B[0m", option);
+        System.out.printf("4. \u001B[4mWait\n\u001B[0m");
         System.out.println();
     }
 
-    public void displayChefTasks(Restaurant restaurant){
-        int option = 0;
+    public void displayChefTasks(Restaurant restaurant) {
         System.out.print("--- CHEF'S AVAILABLE TASKS ---\n");
-        if(restaurant.hasOrderToPrepare()){
-            option++;
-            System.out.printf("%d. \u001B[4mPrepare one unit of an order\u001B[0m\n", option);
+        if (restaurant.hasOrderToPrepare()) {
+            System.out.printf("1. \u001B[4mPrepare one unit of an order\u001B[0m\n");
         }
-        option++;
-        System.out.printf("%d. \u001B[4mWait\n\n\u001B[0m", option);
+        System.out.printf("2. \u001B[4mWait\n\n\u001B[0m");
     }
 
-    public void displayCashierTasks(int turn, Restaurant restaurant){
+    public void displayCashierTasks(int turn, Restaurant restaurant) {
         System.out.print("--- CASHIER'S CURRENT TASK (AUTO)---\n");
         Customer payer = restaurant.getOldestReadyPayer(turn);
-            if(payer == null){
-                System.out.println("Action: \u001B[4mCashier will not process any payments at the end of the turn\u001B[0m");
-            }
-            else{
-                float dollars = (payer.getOrder().getFinalPriceCents() / 100);
-                System.out.printf("Action: \u001B[4mCashier will process payment $%.2f from Customer %d at the end of the turn\n", dollars, payer.getCustomerId());
-            }
-            System.out.println();
+        if (payer == null) {
+            System.out
+                    .println("Action: \u001B[4mCashier will not process any payments at the end of the turn\u001B[0m");
+        } else {
+            double dollars = (payer.getOrder().getFinalPriceCents() / 100.0);
+            System.out.printf(
+                    "Action: \u001B[4mCashier will process payment $%.2f from Customer %d at the end of the turn\u001B[0m%n",
+                    dollars, payer.getCustomerId());
         }
-        
-    
+        System.out.println();
+    }
 
     public void displayResult(GameResult result, Restaurant restaurant) {
         // prints out final result
@@ -446,26 +438,31 @@ public class GameApp {
             System.out.println(
                     "Sorry you have not succedded running this restaurant.\n");
             System.out.println("\u001B[4mREASONS\u001B[0m");
-            if(stats.getPaidCustomerCount() < 4){
+            if (stats.getPaidCustomerCount() < 4) {
                 reasons++;
-                System.out.printf("%d. You only have %d paid customers, but a minimum of 4 paid customers are required.\n", reasons, stats.getPaidCustomerCount());
+                System.out.printf(
+                        "%d. You only have %d paid customers, but a minimum of 4 paid customers are required.\n",
+                        reasons, stats.getPaidCustomerCount());
             }
-            if(stats.getRevenueCents() < 4500){
+            if (stats.getRevenueCents() < 4500) {
                 reasons++;
-                System.out.printf("%d. You only had $%.2f in revenue, but a minimum revenue of $45.00 is required.\n", reasons, stats.getRevenueCents()/100.0);
+                System.out.printf("%d. You only had $%.2f in revenue, but a minimum revenue of $45.00 is required.\n",
+                        reasons, stats.getRevenueCents() / 100.0);
             }
-            if(stats.getAverageSatisfaction() < 60.00){
+            if (stats.getAverageSatisfaction() < 60.00) {
                 reasons++;
-                if(stats.getAverageSatisfaction() == -1){
-                    System.out.printf("%d. You only have a average satisfaction score of N/A, but a minimum score of 60.00 is required.\n", reasons);
-                }
-                else{
-                    System.out.printf("%d. You only have a average satisfaction score of %.2f, but a minimum score of 60.00 is required.\n", reasons, stats.getAverageSatisfaction());
+                if (stats.getAverageSatisfaction() == -1) {
+                    System.out.printf(
+                            "%d. You only have a average satisfaction score of N/A, but a minimum score of 60.00 is required.\n",
+                            reasons);
+                } else {
+                    System.out.printf(
+                            "%d. You only have a average satisfaction score of %.2f, but a minimum score of 60.00 is required.\n",
+                            reasons, stats.getAverageSatisfaction());
                 }
             }
             System.out.println("\nBetter luck next time!!!\n\n");
-        }   
-
+        }
 
         System.out.printf("Turns played: %d%n", 18);
         System.out.printf("Customers served: %d%n", stats.getServedCustomerCount());

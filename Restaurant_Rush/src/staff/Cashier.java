@@ -26,7 +26,7 @@ public class Cashier{
 
         Order order = customer.getOrder();
         int billCents = order.getFinalPriceCents();
-        order.markPaid();
+        //order.markPaid();
         customer.markPaid();
         restaurant.recordPayment(customer, billCents);
         seatingController.releaseTable(customer);
