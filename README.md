@@ -174,10 +174,10 @@ java -cp bin ui.GameApp < ../Testcases/stage1_defeat_abandoned_order.txt
 
 ``` bat
 :: Victory run
-java -cp bin ui.GameApp < ..\\Testcases\\stage1_victory_with_invalid_seat_selection_tables_full_at_turn7.txt
+java -cp bin ui.GameApp < ..\Testcases\stage1_victory_with_invalid_seat_selection_tables_full_at_turn7.txt
 
 :: Defeat run
-java -cp bin ui.GameApp < ..\\Testcases\\stage1_defeat_abandoned_order.txt
+java -cp bin ui.GameApp < ..\Testcases\stage1_defeat_abandoned_order.txt
 ```
 
 **Windows PowerShell** (`<` redirection is not supported, so pipe the
@@ -185,10 +185,10 @@ file in)
 
 ``` powershell
 # Victory run
-Get-Content ..\\Testcases\\stage1_victory_with_invalid_seat_selection_tables_full_at_turn7.txt | java -cp bin ui.GameApp
+Get-Content ..\Testcases\stage1_victory_with_invalid_seat_selection_tables_full_at_turn7.txt | java -cp bin ui.GameApp
 
 # Defeat run
-Get-Content ..\\Testcases\\stage1_defeat_abandoned_order.txt | java -cp bin ui.GameApp
+Get-Content ..\Testcases\stage1_defeat_abandoned_order.txt | java -cp bin ui.GameApp
 ```
 
 __The following test runs demonstrate the main victory and defeat scenarios.__
