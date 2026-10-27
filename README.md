@@ -63,7 +63,7 @@ Windows CMD:
 
 ``` bat
 cd Restaurant_Rush
-javac -d bin -sourcepath src src\\ui\\GameApp.java
+javac -d bin -sourcepath src src\ui\GameApp.java
 java -cp bin ui.GameApp
 ```
 
@@ -71,7 +71,7 @@ Windows PowerShell:
 
 ``` powershell
 cd Restaurant_Rush
-javac -d bin -sourcepath src src\\ui\\GameApp.java
+javac -d bin -sourcepath src src\ui\GameApp.java
 java -cp bin ui.GameApp
 ```
 
