@@ -30,8 +30,8 @@ first.
 
 ## 2. Build and run
 
-All commands are run from the `Restaurant_Rush/` folder. The commands
-are the same on every OS except where noted.
+### IMPORTANT: The first 2 commands in this section are run from the `Restaurant_Rush/` folder. The commands are the same on every OS except where noted.
+
 
 **Compile** (macOS / Linux, Windows CMD and PowerShell all use the same
 command)
@@ -49,7 +49,7 @@ java -cp bin ui.GameApp
 Press `1` at the welcome screen to start. Any other input exits the
 game.
 
-**Quick copy-paste per terminal**
+**___OR___: Quick copy-paste per terminal**
 
 macOS / Linux (bash / zsh):
 
@@ -59,6 +59,8 @@ javac -d bin -sourcepath src src/ui/GameApp.java
 java -cp bin ui.GameApp
 ```
 
+or
+
 Windows CMD:
 
 ``` bat
@@ -66,6 +68,8 @@ cd Restaurant_Rush
 javac -d bin -sourcepath src src\ui\GameApp.java
 java -cp bin ui.GameApp
 ```
+
+or
 
 Windows PowerShell:
 
@@ -158,7 +162,15 @@ After turn 18, the game shows **Victory** or **Defeat**, listing any missed targ
 
 Scripted inputs are in [`Testcases/`](Testcases). Each file is the exact
 sequence of keystrokes (one per line) for a full 18-turn game. Compile
-first (Section 2), then from `Restaurant_Rush/`:
+first (Section 2).
+
+then 
+
+``` run
+cd Restaurant_Rush/
+```
+
+then 
 
 **macOS / Linux**
 
@@ -170,6 +182,8 @@ java -cp bin ui.GameApp < ../Testcases/stage1_victory_with_invalid_seat_selectio
 java -cp bin ui.GameApp < ../Testcases/stage1_defeat_abandoned_order.txt
 ```
 
+or
+
 **Windows CMD**
 
 ``` bat
@@ -179,6 +193,8 @@ java -cp bin ui.GameApp < ..\Testcases\stage1_victory_with_invalid_seat_selectio
 :: Defeat run
 java -cp bin ui.GameApp < ..\Testcases\stage1_defeat_abandoned_order.txt
 ```
+
+or
 
 **Windows PowerShell** (`<` redirection is not supported, so pipe the
 file in)
