@@ -210,24 +210,12 @@ Get-Content ..\\Testcases\\stage1_victory_with_invalid_seat_selection_tables_ful
 Get-Content ..\\Testcases\\stage1_defeat_abandoned_order.txt | java -cp bin ui.GameApp
 ```
 
-### Test cases
+__The following test runs demonstrate the main victory and defeat scenarios.__
 
--   **Victory ---
-    `stage1_victory_with_invalid_seat_selection_tables_full_at_turn7.txt`**
-    -   Demonstrates the full flow for four customers.
-    -   On turn 7, both tables are full, so the attempt to seat the new
-        customer is rejected with an explanation.
-    -   The rejected attempt does **not** consume the Waiter's task.
-    -   **Expected result:** Victory; 4 paid, 0 unhappy departures,
-        \$51.00 revenue, average satisfaction 64.00, 18 turns.
--   **Defeat --- `stage1_defeat_abandoned_order.txt`**
-    -   A seated customer's order is left uncooked until satisfaction
-        reaches 0.
-    -   The customer leaves unpaid, the order is cancelled and the table
-        is freed.
-    -   **Expected result:** Defeat; 1 paid, 1 unhappy departure,
-        \$15.00 revenue, average satisfaction 84.00. The paid-customer
-        and revenue targets are missed.
+| Test | File | What it demonstrates | Expected final result |
+|---|---|---|---|
+| **Victory** | `stage1_victory_with_invalid_seat_selection_tables_full_at_turn7.txt` | Full flow for 4 customers. On turn 7, both tables are full, so the attempt to seat a new customer is rejected with an explanation. The Waiter's task is not consumed. | **Victory** — 4 paid, 0 unhappy departures, revenue **$51.00**, average satisfaction **64.00**, 18 turns |
+| **Defeat** | `stage1_defeat_abandoned_order.txt` | A seated customer's order remains uncooked until satisfaction reaches 0. The customer leaves unpaid, the order is cancelled, and the table is freed. | **Defeat** — 1 paid, 1 unhappy departure, revenue **$15.00**, average satisfaction **84.00**; paid-customer and revenue targets are not met |
 
 Both outputs were re-verified on a clean compile of this tag.
 
@@ -308,43 +296,19 @@ SC2002_Assignment_SCE1_Group_1/
 
 ## 8. Later stages (to be completed in the final submission)
 
-  -----------------------------------------------------------------------
-  Transition        New files         Changed / deleted Commit / compare
-                                      files and reasons link
-  ----------------- ----------------- ----------------- -----------------
-  Stage 1 → 2       *TBC*             *TBC*             *TBC*
-  (`stage-2`)                                           
-
-  Stage 2 → 3       *TBC*             *TBC*             *TBC*
-  (`stage-3`)                                           
-  -----------------------------------------------------------------------
+| Transition | New files | Changed / deleted files and reasons | Commit / comparison link |
+|---|---|---|---|
+| Stage 1 → 2 (`stage-2`) | *TBC* | *TBC* | *TBC* |
+| Stage 2 → 3 (`stage-3`) | *TBC* | *TBC* | *TBC* |
 
 ## 9. Video timestamps (to be filled in)
 
-  -------------------------------------------------------------------------
-  \#                Segment             Timestamp         Presenter
-  ----------------- ------------------- ----------------- -----------------
-  1                 Game launching from *TBC*             *TBC*
-                    the submitted                         
-                    project                               
-
-  2                 Meaningful manager  *TBC*             *TBC*
-                    choices, including                    
-                    a constrained-staff                   
-                    decision                              
-
-  3                 A dish going READY  *TBC*             *TBC*
-                    → SERVED → payment                    
-
-  4                 VIP or Critic       *TBC*             *TBC*
-                    behaviour (Stage 2)                   
-
-  5                 A Stage 3 feature   *TBC*             *TBC*
-
-  6                 One victory and one *TBC*             *TBC*
-                    defeat                                
-
-  7                 Stage tag           *TBC*             *TBC*
-                    comparisons and                       
-                    diagrams                              
-  -------------------------------------------------------------------------
+| # | Segment | Timestamp | Presenter |
+|---:|---|---|---|
+| 1 | Game launching from the submitted project | *TBC* | *TBC* |
+| 2 | Meaningful manager choices, including a constrained-staff decision | *TBC* | *TBC* |
+| 3 | A dish going READY → SERVED → payment | *TBC* | *TBC* |
+| 4 | VIP or Critic behaviour (Stage 2) | *TBC* | *TBC* |
+| 5 | A Stage 3 feature | *TBC* | *TBC* |
+| 6 | One victory and one defeat | *TBC* | *TBC* |
+| 7 | Stage tag comparisons and diagrams | *TBC* | *TBC* |
