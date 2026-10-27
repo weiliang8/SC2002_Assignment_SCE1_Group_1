@@ -13,7 +13,7 @@ public class Restaurant {
     private static final int TABLE_COUNT = 2;
 
     private final Queue<Customer> waitingQueue;
-    private final List<Customer> customers;
+    private final List<Customer> customers; // stored all customer in
     private final List<Table> tables;
     private final Menu menu;
     private final RestaurantStatistics statistics;
@@ -70,18 +70,25 @@ public class Restaurant {
         return waitingQueue.remove(customer);
     }
 
-    /** Returns the earliest registered customer who is eligible to pay this turn. */
+    /**
+     * Returns the earliest registered customer who is eligible to pay this turn.
+     */
     public Customer getOldestReadyPayer(int turn) {
-        if (turn < 1) {
-            throw new IllegalArgumentException("Turn must be positive.");
-        }
+        Customer oldest = null;
+
         for (Customer customer : customers) {
-            if (customer.canPay(turn)
-                    && !paidCustomers.contains(customer)) {
-                return customer;
+
+            if (!customer.canPay(turn)
+                    || paidCustomers.contains(customer)) {
+                continue;
+            }
+
+            if (oldest == null || customer.getReadyToPayTurn() < oldest.getReadyToPayTurn()) {
+                oldest = customer;
             }
         }
-        return null;
+        return oldest;
+
     }
 
     public List<Customer> getCustomers() {
@@ -100,6 +107,52 @@ public class Restaurant {
         return statistics;
     }
 
+    public int getWaitingQueueSize(){
+        return waitingQueue.size();
+    }
+
+    public boolean hasFreeTable(){
+        int no_of_table_seats_avaliable = 2;
+        for(Table t: tables){
+            if(!t.isFree()){
+                no_of_table_seats_avaliable -= 1;
+            }
+            if(no_of_table_seats_avaliable == 0){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean hasSeatedWithoutOrder(){
+        for(Customer c : customers){
+            if(c.getStatus() == CustomerStatus.SEATED && c.getOrder() == null){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasReadyOrder(){
+        for(Customer c: customers){
+            Order o = c.getOrder();
+            if(c.getStatus() == CustomerStatus.SEATED && o != null && o.getStatus() == OrderStatus.READY){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasOrderToPrepare(){
+        for(Customer c: customers){
+            Order o = c.getOrder();
+            if(o != null && (o.getStatus() == OrderStatus.ORDERED || o.getStatus() == OrderStatus.PREPARING)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** Records a customer's first successful serving event. */
     public void recordServed(Customer customer) {
         requireRegistered(customer);
@@ -108,7 +161,9 @@ public class Restaurant {
         }
     }
 
-    /** Records a payment once and snapshots the customer's satisfaction at payment. */
+    /**
+     * Records a payment once and snapshots the customer's satisfaction at payment.
+     */
     public void recordPayment(Customer customer, int cents) {
         requireRegistered(customer);
         if (cents < 0) {
@@ -129,7 +184,9 @@ public class Restaurant {
         paidCustomers.add(customer);
     }
 
-    /** Records an unhappy departure once and removes the customer from the queue. */
+    /**
+     * Records an unhappy departure once and removes the customer from the queue.
+     */
     public void recordDeparture(Customer customer) {
         requireRegistered(customer);
         removeCustomerFromQueue(customer);
@@ -149,4 +206,20 @@ public class Restaurant {
         }
         throw new IllegalArgumentException("Customer is not registered with this restaurant.");
     }
+
+    // public Customer getfirstWaitingCustomer() {
+    // Customer dequeued_customer = waitingQueue.peek();
+    // waitingQueue.remove();
+    // return dequeued_customer;
+    // }
+
+    // public Customer getFirstSeatedCustomer() {
+    // for (Customer customer : customers) {
+    // if (customer.getStatus() == CustomerStatus.SEATED
+    // && customer.getOrder() == null) {
+    // return customer;
+    // }
+    // }
+    // return null;
+    // }
 }
