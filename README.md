@@ -6,7 +6,7 @@ customer gets the Waiter's attention and which order the Chef cooks
 first.
 
 -   **Course:** SC2002 Object-Oriented Design & Programming, NTU
--   **Group:** SCE1 Group 1
+-   **Group:** SCE1 Group 1 __(AY 2026/2027 SEMESTER 1)__
 -   **Repository:**
     https://github.com/weiliang8/SC2002_Assignment_SCE1_Group_1
 -   **This version:** Git tag `stage-1` (Stage 1 only: no VIP, Critic,
@@ -85,93 +85,74 @@ java -cp bin ui.GameApp
 
 ## 3. Base setting (as per the brief)
 
-  -----------------------------------------------------------------------
-  Setting                             Value
-  ----------------------------------- -----------------------------------
-  Turns                               18
+| Setting | Value |
+|---|---|
+| Turns | 18 |
+| Tables | 2 |
+| Staff | 1 Waiter (1 task/turn), 1 Chef (1 prep unit/turn), 1 Cashier (1 payment/turn) |
+| Arrivals | 1 Regular customer at the start of turns 1, 4, 7, 10, 13, and 16 (6 total) |
+| Victory | ≥ 4 paid customers **and** revenue ≥ $45.00 **and** average satisfaction of paid customers ≥ 60 |
 
-  Tables                              2
+### Menu
 
-  Staff                               1 Waiter (1 task/turn), 1 Chef (1
-                                      prep unit/turn), 1 Cashier (1
-                                      payment/turn)
+| Menu item | Price | Prep units |
+|---|---:|---:|
+| Salad | $9.00 | 1 |
+| Burger | $15.00 | 1 |
+| Pasta | $18.00 | 2 |
 
-  Arrivals                            1 Regular customer at the start of
-                                      turns 1, 4, 7, 10, 13, 16 (6 total)
-
-  Victory                             ≥ 4 paid customers **and** revenue
-                                      ≥ \$45.00 **and** average
-                                      satisfaction of paid customers ≥ 60
-  -----------------------------------------------------------------------
-
-  Menu item   Price     Prep units
-  ----------- --------- ------------
-  Salad       \$9.00    1
-  Burger      \$15.00   1
-  Pasta       \$18.00   2
-
-Money is stored as integer cents and displayed as dollars with two
-decimals.
+Money is stored as integer cents and displayed as dollars with two decimals.
 
 ### Customer food choice (deterministic rule)
 
-The manager never picks the food. Customer with ID `n` orders menu item
-`(n - 1) mod 3` in the order Salad, Burger, Pasta:
+The manager never picks the food. Customer with ID `n` orders menu item `(n - 1) mod 3` in the order Salad, Burger, Pasta.
 
-  Customer ID    1       2        3       4       5        6
-  -------------- ------- -------- ------- ------- -------- -------
-  Arrives turn   1       4        7       10      13       16
-  Orders         Salad   Burger   Pasta   Salad   Burger   Pasta
+| Customer ID | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---:|---:|---:|---:|---:|---:|
+| Arrives turn | 1 | 4 | 7 | 10 | 13 | 16 |
+| Orders | Salad | Burger | Pasta | Salad | Burger | Pasta |
 
-The choice is printed when the Waiter takes the order. Because arrivals
-and food choices are fixed, **every run is reproducible from the
-manager's inputs alone** (no randomness, so no seed is needed).
+The choice is printed when the Waiter takes the order. Because arrivals and food choices are fixed, **every run is reproducible from the manager's inputs alone** (no randomness, so no seed is needed).
 
 ## 4. How to play
 
 Each turn runs in this order (all handled by `TurnController`):
 
-1.  **Arrivals:** the scheduled customer joins the waiting queue with
-    satisfaction 100.
-2.  **Start-of-turn display:** turn number, revenue, average
-    satisfaction (N/A if nobody has paid), waiting queue, every
-    customer's status / satisfaction / order status, pending orders,
-    table availability and the staff tasks currently available.
-3.  **Waiter** (choose one, or Wait):
-    -   `1` Seat a queued customer at a free table
-    -   `2` Take a seated customer's order
-    -   `3` Serve a READY order
-    -   `4` Wait
-4.  **Chef** (choose one, or Wait):
-    -   `1` Prepare one unit of a pending order (can be an order the
-        Waiter took this turn)
-    -   `2` Wait
-5.  **Eating and payment:** a customer served on an earlier turn becomes
-    READY_TO_PAY; the Cashier automatically collects from one eligible
-    customer (oldest first). A customer who became READY_TO_PAY this
-    turn pays next turn at the earliest.
-6.  **Waiting and abandonment:** every unserved waiting or seated
-    customer loses 8 satisfaction (min 0). At 0 they leave without
-    paying: their order is cancelled and their table is freed.
-7.  **End-of-turn summary:** served count, unhappy departures, revenue,
-    average satisfaction of paid customers, turns used.
+1. **Arrivals:** The scheduled customer joins the waiting queue with satisfaction 100.
 
-After turn 18 the game shows **Victory** or **Defeat**, and lists which
-targets were missed on a defeat. The game always plays all 18 turns.
+2. **Start-of-turn display:** Shows the turn number, revenue, average satisfaction (N/A if nobody has paid), waiting queue, every customer's status / satisfaction / order status, pending orders, table availability, and currently available staff tasks.
+
+3. **Waiter** (choose one action, or Wait):
+
+   | Choice | Action |
+   |---|---|
+   | `1` | Seat a queued customer at a free table |
+   | `2` | Take a seated customer's order |
+   | `3` | Serve a READY order |
+   | `4` | Wait |
+
+4. **Chef** (choose one action, or Wait):
+
+   | Choice | Action |
+   |---|---|
+   | `1` | Prepare one unit of a pending order (including an order taken by the Waiter this turn) |
+   | `2` | Wait |
+
+5. **Eating and payment:** A customer served on an earlier turn becomes `READY_TO_PAY`. The Cashier automatically collects payment from one eligible customer, oldest first. A customer who becomes `READY_TO_PAY` this turn can pay no earlier than the next turn.
+
+6. **Waiting and abandonment:** Every unserved waiting or seated customer loses 8 satisfaction (minimum 0). At 0, they leave without paying; their order is cancelled and their table is freed.
+
+7. **End-of-turn summary:** Shows the served count, unhappy departures, revenue, average satisfaction of paid customers, and turns used.
+
+After turn 18, the game shows **Victory** or **Defeat**, listing any missed targets in the case of defeat. The game always plays all 18 turns.
 
 ### Timing rules that matter
 
--   The Waiter acts **before** the Chef, so a dish finished this turn
-    can only be served next turn at the earliest.
--   Serve on turn *s*, ready to pay on *s+1*, Cashier collects on *s+2*
-    at the earliest.
--   Satisfaction only drops while a customer is waiting for a table or
-    food. Served / eating / ready-to-pay customers lose nothing.
--   Invalid choices (e.g. seating with no free table, serving a dish
-    that isn't READY, non-numeric input) print the reason and ask again.
-    **The staff task is not used up.**
--   The turn-16 customer cannot finish paying within 18 turns, so at
-    most 5 customers can pay. This is intended.
+- The Waiter acts **before** the Chef, so a dish finished this turn can only be served on the next turn at the earliest.
+- If a dish is served on turn *s*, the customer becomes ready to pay on turn *s* + 1, and the Cashier can collect payment on turn *s* + 2 at the earliest.
+- Satisfaction only drops while a customer is waiting for a table or food. Served, eating, and ready-to-pay customers lose no satisfaction.
+- Invalid choices (e.g. seating with no free table, serving a dish that is not READY, or non-numeric input) display the reason and prompt the player again. **The staff task is not used up.**
+- The customer arriving on turn 16 cannot finish paying within the 18-turn game, so at most 5 customers can pay. This is intentional.
 
 ## 5. Reproducible test runs
 
@@ -245,42 +226,24 @@ SC2002_Assignment_SCE1_Group_1/
 
 ### Where the rules live
 
-  -----------------------------------------------------------------------
-  Responsibility                      Class
-  ----------------------------------- -----------------------------------
-  Turn order and phase sequencing     `TurnController`
-
-  Win / lose check (4 paid, \$45.00,  `GameController.checkResult()`
-  avg 60)                             
-
-  One task per turn and validity      `Waiter`, `Chef`, `Cashier`
-  checks                              
-
-  Satisfaction, status transitions,   `Customer` / `RegularCustomer`
-  food choice                         
-
-  Order and preparation-unit progress `Order`
-
-  Revenue and average satisfaction    `RestaurantStatistics` (via
-                                      `Restaurant`)
-
-  Input and output only, no game      `GameApp`
-  rules                               
-  -----------------------------------------------------------------------
+| Responsibility | Class |
+|---|---|
+| Turn order and phase sequencing | `TurnController` |
+| Win / lose check (4 paid, $45.00, average satisfaction ≥ 60) | `GameController.checkResult()` |
+| One task per turn and validity checks | `Waiter`, `Chef`, `Cashier` |
+| Satisfaction, status transitions, food choice | `Customer` / `RegularCustomer` |
+| Order and preparation-unit progress | `Order` |
+| Revenue and average satisfaction | `RestaurantStatistics` (via `Restaurant`) |
+| Input and output only, no game rules | `GameApp` |
 
 ### Stage 1 OO notes
 
--   **Inheritance / polymorphism:** `Customer` is abstract.
-    `RegularCustomer` supplies the 8-point waiting penalty, and
-    `chooseMenuItem` can be overridden by later customer types.
-    `MenuItem` is an interface implemented by `Dish`.
--   **Encapsulation:** state changes go through guarded methods
-    (`markSeated`, `markServed`, `markPaid`, `leave`) that throw if the
-    transition is illegal.
--   **Composition:** `Restaurant` owns the `Menu`, tables, customer
-    records and `RestaurantStatistics`.
--   **Control / boundary separation:** `GameApp` only collects input and
-    prints state, with rules kept in controllers and entities.
+| OO concept | Explanation |
+|---|---|
+| **Inheritance / polymorphism** | `Customer` is abstract. `RegularCustomer` supplies the 8-point waiting penalty, and `chooseMenuItem` can be overridden by later customer types. `MenuItem` is an interface implemented by `Dish`. |
+| **Encapsulation** | State changes go through guarded methods (`markSeated`, `markServed`, `markPaid`, `leave`) that throw if the transition is illegal. |
+| **Composition** | `Restaurant` owns the `Menu`, tables, customer records, and `RestaurantStatistics`. |
+| **Control / boundary separation** | `GameApp` only collects input and prints state, with rules kept in controllers and entities. |
 
 ## 7. Stage 1 checklist (against the brief)
 
