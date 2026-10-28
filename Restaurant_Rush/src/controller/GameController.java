@@ -23,9 +23,12 @@ public class GameController {
 
     public GameController(GameApp gameApp) {
         this.arrivalSchedule = new HashMap<>();
-        for (int i = 1; i <= 18; i += 3) {
-            arrivalSchedule.put(i, CustomerType.REGULAR);
-        }
+        arrivalSchedule.put(1, CustomerType.REGULAR);
+        arrivalSchedule.put(4, CustomerType.VIP);
+        arrivalSchedule.put(7, CustomerType.REGULAR);
+        arrivalSchedule.put(10, CustomerType.CRITIC);
+        arrivalSchedule.put(13, CustomerType.REGULAR);
+        arrivalSchedule.put(16, CustomerType.REGULAR);
         this.restaurant = new Restaurant();
         this.gameApp = gameApp;
     }
@@ -45,6 +48,10 @@ public class GameController {
         System.out.println("5. The chef can prepare \u001B[1mone\u001B[0m unit of an order per turn, or wait");
         System.out.println(
                 "6. The cashier automatically collects payment from eligible customers,\n   handling at most \u001B[1mone\u001B[0m payment per turn\n");
+        System.out.println("7. Customer types:");
+        System.out.println("\tREGULAR : loses 8 satisfaction per waiting turn, pays full price");
+        System.out.println("\tVIP     : loses 5 satisfaction per waiting turn, gets 10% off");
+        System.out.println("\tCRITIC  : loses 12 satisfaction per waiting turn, posts a review when served:\n\t          satisfaction >= 70 -> everyone still waiting +10, below 50 -> everyone still waiting -10\n");
         displayMenu(restaurant);
         System.out.println("--------------------------------YOUR OBJECTIVE----------------------------------\n");
         System.out.println("By the end of TURN 18, you must:\n");

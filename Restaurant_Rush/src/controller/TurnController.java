@@ -143,9 +143,17 @@ public class TurnController {
                         }
 
                         if (waiter.serve(id, currentTurn)) {
-                            restaurant.recordServed(
-                                    customerController.getCustomerById(id));
+                            Customer served = customerController.getCustomerById(id);
+                            restaurant.recordServed(served);
                             System.out.println("Customer " + id + " served.");
+
+                            // Stage 2: a served customer's review may affect everyone still waiting
+                            int impact = customerController.applyReview(served);
+                            if (impact > 0) {
+                                System.out.printf("Customer %d posted a GOOD review! Everyone still waiting gains %d satisfaction.%n", id, impact);
+                            } else if (impact < 0) {
+                                System.out.printf("Customer %d posted a BAD review! Everyone still waiting loses %d satisfaction.%n", id, -impact);
+                            }
                             return;
                         }
                     }

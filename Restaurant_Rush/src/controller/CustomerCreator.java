@@ -1,12 +1,21 @@
 package controller;
 
+import entity.CriticCustomer;
+import entity.Customer;
+import entity.CustomerType;
 import entity.RegularCustomer;
+import entity.VIPCustomer;
 
-/** Factory for Stage 1*/
+/** Factory: the only place that maps a CustomerType to a Customer subclass. */
 public class CustomerCreator {
-    public CustomerCreator(){};
+    public CustomerCreator() {
+    }
 
-    public RegularCustomer createRegularCustomer(int customerId) {
-        return new RegularCustomer(customerId);
+    public Customer createCustomer(CustomerType type, int customerId) {
+        return switch (type) {
+            case REGULAR -> new RegularCustomer(customerId);
+            case VIP -> new VIPCustomer(customerId);
+            case CRITIC -> new CriticCustomer(customerId);
+        };
     }
 }
