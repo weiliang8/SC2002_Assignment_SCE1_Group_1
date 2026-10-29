@@ -35,14 +35,9 @@ public class CustomerController {
      * Restaurant.addCustomer must add to BOTH records and the waiting queue.
      */
     public void processNewCustomer(CustomerType type) {
-        if (type == CustomerType.REGULAR){
-            Customer customer = customerCreator.createRegularCustomer(nextCustomerId);
-            restaurant.addCustomer(customer);
-            nextCustomerId++;
-        }
-        //Customer customer = customerCreator.createCustomer(nextCustomerId);
-        
-        
+        Customer customer = customerCreator.createCustomer(type, nextCustomerId);
+        restaurant.addCustomer(customer);
+        nextCustomerId++;
     }
 
     public void processEating(int turn) {
@@ -73,6 +68,20 @@ public class CustomerController {
         }
     }
 }
+
+    /** Spreads a just-served customer's review to everyone still waiting. Returns the change applied. */
+    public int applyReview(Customer reviewer) {
+        int impact = reviewer.getReviewImpact();
+        if (impact == 0) {
+            return 0;
+        }
+        for (Customer customer : snapshot()) {
+            if (customer != reviewer && customer.isWaitingForService()) {
+                customer.adjustSatisfaction(impact);
+            }
+        }
+        return impact;
+    }
 
     public Customer getCustomerById(int id){
          List<Customer> customers = restaurant.getCustomers();

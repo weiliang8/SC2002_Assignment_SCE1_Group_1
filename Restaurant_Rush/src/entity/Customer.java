@@ -58,6 +58,16 @@ public abstract class Customer {
                 "Chosen menu item must not be null.");
     }
 
+    /** Customer-type discount applied before any pricing policy. Default: none. */
+    public int applyDiscount(int priceCents) {
+        return priceCents;
+    }
+
+    /** Satisfaction change this customer's review gives to everyone still waiting. Default: none. */
+    public int getReviewImpact() {
+        return 0;
+    }
+
     /** Adjust by a signed amount, clamp to 0..100, and return the new value. */
     public int adjustSatisfaction(int amount) {
         // Terminal customer records must not be changed or revived.

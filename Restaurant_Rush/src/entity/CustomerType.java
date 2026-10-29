@@ -1,5 +1,7 @@
 package entity;
 
 public enum CustomerType {
-    REGULAR
-} 
+    REGULAR,
+    VIP,
+    CRITIC
+}

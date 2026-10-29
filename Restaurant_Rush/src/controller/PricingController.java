@@ -26,7 +26,8 @@ public class PricingController {
     }
 
     int originalPrice = item.getPriceCents();
+    int customerPrice = customer.applyDiscount(originalPrice); // e.g. VIP 10% off
 
-    return policy.apply(originalPrice);
+    return policy.apply(customerPrice);
     }
 }
