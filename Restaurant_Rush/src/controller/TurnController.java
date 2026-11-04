@@ -2,8 +2,13 @@ package controller;
 
 import entity.Restaurant;
 import entity.Customer;
+import entity.CustomerStatus;
 import entity.CustomerType;
+import entity.HappyHourStatus;
 import entity.Order;
+import entity.Table;
+import staff.Host;
+import staff.HostAction;
 import staff.Waiter;
 import staff.WaiterAction;
 import staff.Chef;
@@ -16,31 +21,44 @@ public class TurnController {
     private Restaurant restaurant;
     private CustomerController customerController;
     private OrderController orderController;
+    private Host host;
     private Waiter waiter;
     private Chef chef;
     private Cashier cashier;
     private GameApp gameApp;
+    private boolean isHappyHourActive;
 
     public TurnController(Restaurant restaurant,
             CustomerController customerController,
-            OrderController orderController,
+            OrderController orderController, Host host,
             Waiter waiter, Chef chef, Cashier cashier,
             GameApp gameApp) {
         this.restaurant = restaurant;
         this.customerController = customerController;
         this.orderController = orderController;
+        this.host = host;
         this.waiter = waiter;
         this.chef = chef;
         this.cashier = cashier;
         this.gameApp = gameApp;
+        this.isHappyHourActive = false;
     }
 
     public void playTurn(int currentTurn, CustomerType arrival) {
         // 1. Process arrivals first
         processNewArrivals(currentTurn, arrival);
-
-        // 2. Display updated game state
+        boolean prevState = isHappyHourActive;
         displayState(currentTurn);
+        // Decide if we are running happy hour or nah
+        runHappyHourChoice();
+        if(prevState == false && isHappyHourActive == true){
+            displayState(currentTurn);
+        }
+        else if(prevState == true && isHappyHourActive == true){
+            displayState(currentTurn);
+        }
+        // 2. Display updated game state
+        
 
         //gameApp.displayStaffAvailability(
         //       !waiter.hasActedThisTurn(currentTurn),
@@ -49,6 +67,10 @@ public class TurnController {
         gameApp.displayStaffTasks(currentTurn, restaurant);
 
         // 3. Staff actions
+        runHostPhase(currentTurn);
+        System.out.println();
+        gameApp.displayWaiterTasks(restaurant);
+        System.out.println("------------------------------");
         runWaiterPhase(currentTurn);
         System.out.println();
         gameApp.displayChefTasks(restaurant);
@@ -91,6 +113,37 @@ public class TurnController {
 
     }
 
+    public void runHostPhase(int currentTurn){
+        while(true){
+            try{
+                HostAction action = gameApp.getHostAction();
+
+                switch (action) {
+                    case SEAT_CUSTOMER -> {
+                        int id = gameApp.getWaiterSeatCustomerId(restaurant);
+                        if (id == -1) {
+                            // System.out.println("\u001B[4mEnter valid customer ID\u001B[0m");
+                            continue;
+                        }
+                        Customer customer = customerController.getCustomerById(id);
+
+                        if (host.seat(customer, currentTurn)) {
+                            System.out.println("Customer " + id + " seated.");
+                            return;
+                        }
+                    }
+                    case WAIT -> {
+                        System.out.println("Waiter waits.");
+                        return;
+                    }
+
+                }
+            }catch (InvalidActionException | IllegalStateException ex) {
+                System.out.println("Invalid action: " + ex.getMessage());
+            }
+        }
+    }
+
     public void runWaiterPhase(int currentTurn) {
         while (true) {
             try {
@@ -122,7 +175,7 @@ public class TurnController {
                         Customer customer = customerController.getCustomerById(id);
 
                         if (waiter.takeOrder(
-                                customer, restaurant.getMenu(), currentTurn)) {
+                                customer, restaurant.getMenu(), currentTurn, isHappyHourActive)) {
                             Order order = customer.getOrder();
 
                             System.out.printf(
@@ -240,6 +293,52 @@ public class TurnController {
     public void displayTurnSummary(int currentTurn) {
         // displays summary after turn
         gameApp.displayTurnSummary(restaurant, currentTurn);
+    }
+
+    public void runHappyHourChoice(){
+        while(true){
+            try{
+                HappyHourStatus choice = gameApp.getHappyHourChoice();
+
+                switch(choice){
+                    case ACTIVE -> {
+                        // Orders taken will get 20% off (DONE)
+                        // Each round customers waiting for table or food will get additional 15 pts (MAX 100) (done)
+                        //APPLY VIP DISCOUNT THEN HAPPY HOUR DISCOUNT (DONE)
+                        isHappyHourActive = true;
+                        for(Customer c: restaurant.getWaitingCustomers()){
+                            c.setSatisfaction(15);
+                        }
+
+                        for(Table table: restaurant.getTables()){
+                            Customer customer = table.getOccupant();
+
+                            if(customer != null && (customer.getStatus() == CustomerStatus.WAITING || customer.getStatus() == CustomerStatus.SEATED)){
+                                customer.setSatisfaction(15);
+                            }
+                        }
+                        return;
+                    }
+
+                    case HAVE_NOT_USED -> {
+                        System.out.println("\n\t\t       -----------------------");
+                        System.out.println("\t\t        Happy Hour: AVAILABLE ");
+                        System.out.println("\t\t       -----------------------\n");
+                        return;
+                    }
+
+                    case ENDED -> {
+                        System.out.println("\n\t\t       -----------------------");
+                        System.out.println("\t\t       Happy Hour: UNAVAILABLE");
+                        System.out.println("\t\t       -----------------------\n");
+                        isHappyHourActive = false;
+                        return;
+                    }
+                }
+            }catch (InvalidActionException | IllegalStateException ex) {
+                System.out.println("Invalid action: " + ex.getMessage());
+            }
+        }
     }
 
 }

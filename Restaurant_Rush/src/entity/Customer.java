@@ -207,4 +207,13 @@ public abstract class Customer {
             throw new IllegalArgumentException("Turn must be positive.");
         }
     }
+
+    public void setSatisfaction(int amt){ // added to edit satisfaction
+        if((satisfaction + amt) > 100){
+            satisfaction = 100;
+        }
+        else{
+            satisfaction += amt;
+        }
+    }
 }

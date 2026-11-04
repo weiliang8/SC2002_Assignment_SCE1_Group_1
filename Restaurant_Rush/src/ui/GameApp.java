@@ -5,10 +5,12 @@ import java.util.Scanner;
 import controller.GameController;
 import controller.OrderController;
 import entity.GameResult;
+import entity.HappyHourStatus;
 import entity.Order;
 import entity.Restaurant;
 import entity.RestaurantStatistics;
 import entity.Table;
+import staff.HostAction;
 //import staff.Waiter;
 import staff.WaiterAction;
 import entity.Customer;
@@ -16,9 +18,12 @@ import entity.CustomerStatus;
 
 public class GameApp {
     private Scanner scanner;
+    private HappyHourStatus status;
+    private int happyHourTurnsLeft = 2;
 
     public GameApp(Scanner scanner) {
         this.scanner = scanner;
+        this.status = HappyHourStatus.HAVE_NOT_USED;
     }
 
     public static void main(String[] args) throws Exception {
@@ -123,6 +128,26 @@ public class GameApp {
      * 
      */
 
+    public HostAction getHostAction(){
+        while (true) {
+            System.out.println("\n\u001b[4mWhat would you like the host to do?\u001b[0m");
+            System.out.println("1. Seat a customer in the queue");
+            System.out.println("2. Wait\n");
+
+            int choice = readInt("Enter your choice (1 or 2): ");
+
+            switch (choice) {
+                case 1 -> {
+                    return HostAction.SEAT_CUSTOMER;
+                }
+                case 2 -> {
+                    return HostAction.WAIT;
+                }
+                default -> System.out.println("Invalid Choice. Try again.");
+            }
+        }
+    }
+    
     public WaiterAction getWaiterAction() {
         // get waiteraction
         while (true) {
@@ -383,10 +408,20 @@ public class GameApp {
      */
     public void displayStaffTasks(int turn, Restaurant restaurant) {
         System.out.printf("--- STAFF TASKS AVALIABLE (TURN %d) ---\n\n", turn);
+        displayHostTasks(restaurant);
         displayWaiterTasks(restaurant);
         displayChefTasks(restaurant);
         displayCashierTasks(turn, restaurant);
         System.out.println("--------------------------------------\n");
+    }
+
+    public void displayHostTasks(Restaurant restaurant){
+        System.out.print("--- HOST'S AVALIABLE TASKS ---\n");
+        if (restaurant.getWaitingQueueSize() > 0 && restaurant.hasFreeTable()) {
+            System.out.printf("1. \u001B[4mSeat a customer in the queue\u001B[0m\n");
+        }
+        System.out.printf("2. \u001B[4mWait\n\u001B[0m");
+        System.out.println();
     }
 
     public void displayWaiterTasks(Restaurant restaurant) {
@@ -491,4 +526,43 @@ public class GameApp {
         }
     }
 
+    public HappyHourStatus getHappyHourChoice(){
+        while(true){
+            if(status == HappyHourStatus.ENDED){
+                return status;
+            }
+            if(happyHourTurnsLeft == 1){
+                System.out.println("\n\t\t    ------------------------------");
+                System.out.println("\t\t    HAPPY HOUR: ACTIVE (ROUND 2/2)");
+                System.out.println("\t\t    ------------------------------\n");
+                System.out.println("\t\t   <===========UPDATED===========>\n");
+                happyHourTurnsLeft--;
+                return status;
+            }
+            if(happyHourTurnsLeft == 0){
+                status = HappyHourStatus.ENDED;
+                return status;
+            }
+            System.out.println("\u001B[4mWould you like to enable Happy Hour?\u001b[0m");
+            System.out.println("(1) Yes");
+            System.out.println("(2) No\n");
+            System.out.print("Enter your choice (1 or 2): ");
+            int choice = scanner.nextInt();
+            switch(choice){
+                case 1 -> {
+                    status = HappyHourStatus.ACTIVE;
+                    System.out.println("\n\t\t    ------------------------------");
+                    System.out.println("\t\t    HAPPY HOUR: ACTIVE (ROUND 1/2)");
+                    System.out.println("\t\t    ------------------------------\n");
+                    System.out.println("\t\t   <===========UPDATED===========>\n");
+                    happyHourTurnsLeft--;
+                    return status;
+                }
+                case 2 -> {
+                    return status;
+                }
+                default -> System.out.println("Invalid Choice. Try again.");
+            }
+        }
+    }
 }

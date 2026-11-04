@@ -37,9 +37,19 @@ public class Restaurant {
 
     private static Menu createBaseMenu() {
         Menu baseMenu = new Menu();
-        baseMenu.addItem(new Dish("Salad", 900, 1));
-        baseMenu.addItem(new Dish("Burger", 1500, 1));
-        baseMenu.addItem(new Dish("Pasta", 1800, 2));
+        
+        Dish salad = new Dish("Salad", 900, 1);
+        Dish burger = new Dish("Burger", 1500, 1);
+        Dish pasta = new Dish("Pasta", 1800, 2);
+        
+        baseMenu.addItem(salad);
+        baseMenu.addItem(burger);
+        baseMenu.addItem(pasta);
+
+        baseMenu.addItem(new ComboMeal(salad, burger));
+        baseMenu.addItem(new ComboMeal(salad, pasta));
+        baseMenu.addItem(new ComboMeal(burger, pasta));
+
         return baseMenu;
     }
 
@@ -105,6 +115,10 @@ public class Restaurant {
 
     public RestaurantStatistics getStatistics() {
         return statistics;
+    }
+
+    public List<Customer> getWaitingCustomers(){ // for happy hour
+        return new ArrayList<>(waitingQueue);
     }
 
     public int getWaitingQueueSize(){
