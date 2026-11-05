@@ -26,6 +26,8 @@ public class TurnController {
     private Chef chef;
     private Cashier cashier;
     private GameApp gameApp;
+    private HappyHourStatus status;
+    private int happyHourTurnsLeft;
     private boolean isHappyHourActive;
 
     public TurnController(Restaurant restaurant,
@@ -41,22 +43,18 @@ public class TurnController {
         this.chef = chef;
         this.cashier = cashier;
         this.gameApp = gameApp;
+        this.status = HappyHourStatus.HAVE_NOT_USED;
+        this.happyHourTurnsLeft = 2;
         this.isHappyHourActive = false;
     }
 
     public void playTurn(int currentTurn, CustomerType arrival) {
         // 1. Process arrivals first
         processNewArrivals(currentTurn, arrival);
-        boolean prevState = isHappyHourActive;
         displayState(currentTurn);
         // Decide if we are running happy hour or nah
         runHappyHourChoice();
-        if(prevState == false && isHappyHourActive == true){
-            displayState(currentTurn);
-        }
-        else if(prevState == true && isHappyHourActive == true){
-            displayState(currentTurn);
-        }
+        
         // 2. Display updated game state
         
 
@@ -133,7 +131,7 @@ public class TurnController {
                         }
                     }
                     case WAIT -> {
-                        System.out.println("Waiter waits.");
+                        System.out.println("Host waits.");
                         return;
                     }
 
@@ -298,39 +296,41 @@ public class TurnController {
     public void runHappyHourChoice(){
         while(true){
             try{
-                HappyHourStatus choice = gameApp.getHappyHourChoice();
+                HappyHourStatus choice = gameApp.getHappyHourChoice(status, happyHourTurnsLeft);
 
                 switch(choice){
                     case ACTIVE -> {
                         // Orders taken will get 20% off (DONE)
-                        // Each round customers waiting for table or food will get additional 15 pts (MAX 100) (done)
+                        // Each round customers waiting for table or food will get additional 15 pts (MAX 100) (DONE)
                         //APPLY VIP DISCOUNT THEN HAPPY HOUR DISCOUNT (DONE)
+                        if(status != choice){
+                            status = choice;
+                        }
                         isHappyHourActive = true;
+                        happyHourTurnsLeft--;
                         for(Customer c: restaurant.getWaitingCustomers()){
-                            c.setSatisfaction(15);
+                            c.adjustSatisfaction(15);
                         }
 
                         for(Table table: restaurant.getTables()){
                             Customer customer = table.getOccupant();
 
                             if(customer != null && (customer.getStatus() == CustomerStatus.WAITING || customer.getStatus() == CustomerStatus.SEATED)){
-                                customer.setSatisfaction(15);
+                                customer.adjustSatisfaction(15);
                             }
                         }
+                        gameApp.displayUpdatedSatisfaction(restaurant);
                         return;
                     }
 
                     case HAVE_NOT_USED -> {
-                        System.out.println("\n\t\t       -----------------------");
-                        System.out.println("\t\t        Happy Hour: AVAILABLE ");
-                        System.out.println("\t\t       -----------------------\n");
                         return;
                     }
 
                     case ENDED -> {
-                        System.out.println("\n\t\t       -----------------------");
-                        System.out.println("\t\t       Happy Hour: UNAVAILABLE");
-                        System.out.println("\t\t       -----------------------\n");
+                        if(status != choice){
+                            status = choice;
+                        }
                         isHappyHourActive = false;
                         return;
                     }

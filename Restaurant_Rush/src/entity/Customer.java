@@ -208,12 +208,4 @@ public abstract class Customer {
         }
     }
 
-    public void setSatisfaction(int amt){ // added to edit satisfaction
-        if((satisfaction + amt) > 100){
-            satisfaction = 100;
-        }
-        else{
-            satisfaction += amt;
-        }
-    }
 }

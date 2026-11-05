@@ -18,12 +18,9 @@ import entity.CustomerStatus;
 
 public class GameApp {
     private Scanner scanner;
-    private HappyHourStatus status;
-    private int happyHourTurnsLeft = 2;
 
     public GameApp(Scanner scanner) {
         this.scanner = scanner;
-        this.status = HappyHourStatus.HAVE_NOT_USED;
     }
 
     public static void main(String[] args) throws Exception {
@@ -526,43 +523,68 @@ public class GameApp {
         }
     }
 
-    public HappyHourStatus getHappyHourChoice(){
+    public HappyHourStatus getHappyHourChoice(HappyHourStatus status, int happyHourTurnsLeft){
         while(true){
             if(status == HappyHourStatus.ENDED){
-                return status;
+                System.out.println("--------------------------------------------------------------------------------------------------------------");
+                System.out.println("\t\t\t\t\t Happy Hour: UNAVAILABLE ");
+                System.out.println("--------------------------------------------------------------------------------------------------------------\n");
+                return HappyHourStatus.ENDED;
             }
             if(happyHourTurnsLeft == 1){
-                System.out.println("\n\t\t    ------------------------------");
-                System.out.println("\t\t    HAPPY HOUR: ACTIVE (ROUND 2/2)");
-                System.out.println("\t\t    ------------------------------\n");
-                System.out.println("\t\t   <===========UPDATED===========>\n");
+                System.out.println("\n--------------------------------------------------------------------------------------------------------------");
+                System.out.println("\t\t\t\t\tHAPPY HOUR: ACTIVE (ROUND 2/2)");
+                System.out.println("--------------------------------------------------------------------------------------------------------------\n");
+                System.out.println("\nUPDATING SATISFACTION SCORES......\n");
                 happyHourTurnsLeft--;
-                return status;
+                return HappyHourStatus.ACTIVE;
             }
             if(happyHourTurnsLeft == 0){
-                status = HappyHourStatus.ENDED;
-                return status;
+                System.out.println("--------------------------------------------------------------------------------------------------------------");
+                System.out.println("\t\t\t\t\t Happy Hour: UNAVAILABLE ");
+                System.out.println("--------------------------------------------------------------------------------------------------------------\n");
+                return HappyHourStatus.ENDED;
             }
             System.out.println("\u001B[4mWould you like to enable Happy Hour?\u001b[0m");
             System.out.println("(1) Yes");
             System.out.println("(2) No\n");
-            System.out.print("Enter your choice (1 or 2): ");
-            int choice = scanner.nextInt();
+            //System.out.print("Enter your choice (1 or 2): ");
+            int choice = readInt("Enter your choice (1-2): ");
             switch(choice){
                 case 1 -> {
-                    status = HappyHourStatus.ACTIVE;
-                    System.out.println("\n\t\t    ------------------------------");
-                    System.out.println("\t\t    HAPPY HOUR: ACTIVE (ROUND 1/2)");
-                    System.out.println("\t\t    ------------------------------\n");
-                    System.out.println("\t\t   <===========UPDATED===========>\n");
-                    happyHourTurnsLeft--;
-                    return status;
+                    System.out.println("\n\nHAPPY HOUR ACTIVATING......\n");
+                    System.out.println("\n--------------------------------------------------------------------------------------------------------------");
+                    System.out.println("\t\t\t\t\tHAPPY HOUR: ACTIVE (ROUND 1/2)");
+                    System.out.println("--------------------------------------------------------------------------------------------------------------\n");
+                    System.out.println("\nUPDATING SATISFACTION SCORES......\n");
+                    return HappyHourStatus.ACTIVE;
                 }
                 case 2 -> {
-                    return status;
+                    System.out.println("\n\u001b[4mYou have decided not to activate HAPPY HOUR.\u001B[0m\n");
+                    System.out.println("\n--------------------------------------------------------------------------------------------------------------");
+                    System.out.println("\t\t\t\t\t  Happy Hour: NOT USED ");
+                    System.out.println("--------------------------------------------------------------------------------------------------------------\n");
+                    return HappyHourStatus.HAVE_NOT_USED;
                 }
                 default -> System.out.println("Invalid Choice. Try again.");
             }
         }
+    }
+
+    public void displayUpdatedSatisfaction(Restaurant restaurant){
+        System.out.println("\n--- Overall Customer and Order Status ---");
+
+        for (Customer customer : restaurant.getCustomers()) {
+            String orderStatus = customer.getOrder() == null ? "NO ORDER" : customer.getOrder().getStatus().toString();
+            System.out.printf(
+                    "Customer %d : {Customer ID: %d | Customer Type: %s | Customer Status: %s | Updated Satisfaction: %d | Order Status: %s}%n",
+                    customer.getCustomerId(),
+                    customer.getCustomerId(),
+                    customer.getCustomerType().toString(),
+                    customer.getStatus(),
+                    customer.getSatisfaction(),
+                    orderStatus);
+        }
+        System.out.println("\n");
     }
 }

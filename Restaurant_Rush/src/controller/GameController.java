@@ -152,7 +152,7 @@ public class GameController {
                 .println("\u001B[4mITEM\u001B[0m\t\t\t\u001B[4mPRICE\u001B[0m\t\t\u001B[4mPREPARATION UNITS\u001B[0m\n");
 
         for (MenuItem item : restaurant.getMenu().getItems()) {
-            if(item.getName() == "Salad" || item.getName() == "Burger" || item.getName() == "Pasta"){
+            if(item.getName().equals("Salad") || item.getName().equals("Burger") || item.getName().equals("Pasta")){
                 System.out.printf(
                     "%s\t\t\t$%.2f\t\t%d Prep Unit%s%n",
                     item.getName(),
