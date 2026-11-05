@@ -147,7 +147,7 @@ public class TurnController {
                             restaurant.recordServed(served);
                             System.out.println("Customer " + id + " served.");
 
-                            // Stage 2: a served customer's review may affect everyone still waiting
+                            // Stage 2
                             int impact = customerController.applyReview(served);
                             if (impact > 0) {
                                 System.out.printf("Customer %d posted a GOOD review! Everyone still waiting gains %d satisfaction.%n", id, impact);
@@ -205,7 +205,7 @@ public class TurnController {
                                     order.getUnitsTotal(),
                                     order.getStatus());
 
-                            return; // End Chef phase
+                            return;
                         }
 
                     } catch (InvalidActionException ex) {
@@ -223,12 +223,10 @@ public class TurnController {
     }
 
     public Customer processPayment(int currentTurn) {
-        // calls cashier to carry out
         return cashier.processPayment(currentTurn);
     }
 
     public void processEating(int currentTurn) {
-        // carry on eating
         customerController.processEating(currentTurn);
     }
 
@@ -238,7 +236,6 @@ public class TurnController {
     }
 
     public void displayTurnSummary(int currentTurn) {
-        // displays summary after turn
         gameApp.displayTurnSummary(restaurant, currentTurn);
     }
 
