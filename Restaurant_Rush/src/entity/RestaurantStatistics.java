@@ -1,6 +1,5 @@
 package entity;
 
-/** Cumulative statistics for one restaurant run. Money is stored in cents. */
 public class RestaurantStatistics {
     private int revenueCents;
     private int paidSatisfactionTotal;
@@ -31,7 +30,6 @@ public class RestaurantStatistics {
         unhappyDepartureCustomerCount = Math.addExact(unhappyDepartureCustomerCount, 1);
     }
 
-    /** Returns 0.0 if no customers have paid; callers can display N/A in that case. */
     public double getAverageSatisfaction() {
         if (paidCustomerCount == 0) {
             return -1;
