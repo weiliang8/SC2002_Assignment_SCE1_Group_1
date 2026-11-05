@@ -3,10 +3,6 @@ package entity;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Person 2: customer state and behaviour, following the supplied UML.
- * No queue, table, revenue or CLI ownership is placed in this class.
- */
 public abstract class Customer {
     private final int customerId;
     private CustomerType customerType;
@@ -37,18 +33,13 @@ public abstract class Customer {
         return waitingPenalty;
     }
 
-    /** Called exactly once at turn end by CustomerController. */
     public void applyWaitingPenalty() {
         if (isWaitingForService()) {
             adjustSatisfaction(-getWaitingPenalty());
         }
     }
 
-    /**
-     * Deterministic customer choice: IDs 1,2,3,... cycle over the menu.
-     * With menu order Salad, Burger, Pasta the choices repeat in that order.
-     * The manager never selects the food. Subclasses may override this rule.
-     */
+    //customer choice: IDs 1,2,3,... cycle over the menu.
     public MenuItem chooseMenuItem(List<MenuItem> menu) {
         Objects.requireNonNull(menu, "Menu must not be null.");
         if (menu.isEmpty()) {
@@ -58,19 +49,16 @@ public abstract class Customer {
                 "Chosen menu item must not be null.");
     }
 
-    /** Customer-type discount applied before any pricing policy. Default: none. */
     public int applyDiscount(int priceCents) {
         return priceCents;
     }
 
-    /** Satisfaction change this customer's review gives to everyone still waiting. Default: none. */
     public int getReviewImpact() {
         return 0;
     }
 
-    /** Adjust by a signed amount, clamp to 0..100, and return the new value. */
     public int adjustSatisfaction(int amount) {
-        // Terminal customer records must not be changed or revived.
+        //Terminal customer records must not be changed or revived.
         if (status != CustomerStatus.PAID && status != CustomerStatus.LEFT) {
             long adjusted = (long) satisfaction + amount;
             satisfaction = (int) Math.max(0L, Math.min(100L, adjusted));
@@ -94,12 +82,10 @@ public abstract class Customer {
         return status;
     }
 
-    /** Returns null before an order has been taken. */
     public Order getOrder() {
         return order;
     }
 
-    /** Waiter attaches the new order after seating and price calculation. */
     public void setOrder(Order order) {
         Objects.requireNonNull(order, "Order must not be null.");
         require(status == CustomerStatus.SEATED, "Only seated customers can order.");
@@ -109,17 +95,11 @@ public abstract class Customer {
         this.order = order;
     }
 
-    /** Existing Waiter calls this after SeatingController has assigned a free table. */
     public void markSeated() {
         require(status == CustomerStatus.WAITING, "Customer is not waiting for a table.");
         status = CustomerStatus.SEATED;
     }
 
-    /**
-     * Called by Waiter in its phase, before Chef acts this turn.
-     * Keeps customer and order states consistent. Also accepts an order that
-     * Waiter has already marked SERVED immediately before this call.
-     */
      public void markServed(int turn) {
          requirePositiveTurn(turn);
         require(status == CustomerStatus.SEATED && order != null,
@@ -134,9 +114,6 @@ public abstract class Customer {
          status = CustomerStatus.EATING;
      }
 
-  
-
-    /** Served on turn s -> ready to pay on turn s+1, not on turn s. */
     public void finishEating(int turn) {
         requirePositiveTurn(turn);
         if (status == CustomerStatus.EATING && turn > servedTurn) {
@@ -145,16 +122,10 @@ public abstract class Customer {
         }
     }
 
-    /** Cashier must call this before charging: ready on r -> payment after r. */
     public boolean canPay(int turn) {
         return status == CustomerStatus.READY_TO_PAY && turn > readyToPayTurn;
     }
 
-    /**
-     * Cashier calls only after canPay(currentTurn) succeeds.
-     * Retains the UML's no-argument signature; this method cannot itself know
-     * the current game turn. Cashier owns the one-payment-per-turn constraint.
-     */
     public void markPaid() {
         require(status == CustomerStatus.READY_TO_PAY, "Customer is not ready to pay.");
         require(order != null && (order.getStatus() == OrderStatus.SERVED
@@ -166,7 +137,6 @@ public abstract class Customer {
         status = CustomerStatus.PAID;
     }
 
-    /** Cancel unserved food. Controller handles queue, table and statistics. */
     public void leave() {
         require(isWaitingForService() && satisfaction == 0,
                 "Only an unserved customer with zero satisfaction abandons.");
@@ -182,7 +152,6 @@ public abstract class Customer {
         status = CustomerStatus.LEFT;
     }
 
-    // Read-only helpers added to the UML for integration and cashier ordering.
     public int getServedTurn() {
         return servedTurn;
     }
