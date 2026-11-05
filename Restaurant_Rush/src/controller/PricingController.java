@@ -2,7 +2,6 @@ package controller;
 
 import entity.Customer;
 import entity.MenuItem;
-//import java.util.Objects;
 
 public class PricingController {
 

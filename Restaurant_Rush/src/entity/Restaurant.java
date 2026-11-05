@@ -8,12 +8,10 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
-/** Owns the restaurant's customers, queue, two tables, menu and statistics. */
 public class Restaurant {
     private static final int TABLE_COUNT = 2;
-
     private final Queue<Customer> waitingQueue;
-    private final List<Customer> customers; // stored all customer in
+    private final List<Customer> customers; 
     private final List<Table> tables;
     private final Menu menu;
     private final RestaurantStatistics statistics;
@@ -72,7 +70,7 @@ public class Restaurant {
         return true;
     }
 
-    /** Removes a customer from the queue without deleting their history. */
+    // Removes a customer from the queue 
     public boolean removeCustomerFromQueue(Customer customer) {
         if (customer == null) {
             throw new IllegalArgumentException("Customer cannot be null.");
@@ -81,8 +79,7 @@ public class Restaurant {
     }
 
     
-     //Returns the earliest registered customer who is eligible to pay this turn.
-     
+    //Returns the earliest customer who is eligible to pay this turn.
     public Customer getOldestReadyPayer(int turn) {
         Customer oldest = null;
 
@@ -167,7 +164,7 @@ public class Restaurant {
         return false;
     }
 
-    /** Records a customer's first successful serving event. */
+    //Records a customer's first successful serving event. 
     public void recordServed(Customer customer) {
         requireRegistered(customer);
         if (servedCustomers.add(customer)) {
@@ -175,9 +172,7 @@ public class Restaurant {
         }
     }
 
-    /**
-     * Records a payment once and snapshots the customer's satisfaction at payment.
-     */
+    //Records a payment once and snapshots the customer's satisfaction at payment
     public void recordPayment(Customer customer, int cents) {
         requireRegistered(customer);
         if (cents < 0) {
@@ -198,9 +193,7 @@ public class Restaurant {
         paidCustomers.add(customer);
     }
 
-    /**
-     * Records an unhappy departure once and removes the customer from the queue.
-     */
+    //Records an unhappy departure once and removes the customer from queue
     public void recordDeparture(Customer customer) {
         requireRegistered(customer);
         removeCustomerFromQueue(customer);
@@ -219,7 +212,5 @@ public class Restaurant {
             }
         }
         throw new IllegalArgumentException("Customer is not registered with this restaurant.");
-    }
-
-    
+    }    
 }

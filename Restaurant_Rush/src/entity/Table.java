@@ -1,6 +1,5 @@
 package entity;
 
-/** A restaurant table with at most one current customer. */
 public class Table {
     private final int id;
     private Customer occupant;

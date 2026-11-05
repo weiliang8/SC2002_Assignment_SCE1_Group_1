@@ -6,7 +6,7 @@ import entity.CustomerType;
 import entity.RegularCustomer;
 import entity.VIPCustomer;
 
-/** Factory: the only place that maps a CustomerType to a Customer subclass. */
+
 public class CustomerCreator {
     public CustomerCreator() {
     }

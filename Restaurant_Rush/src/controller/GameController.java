@@ -79,7 +79,7 @@ public class GameController {
 
     public void startGame() {
 
-        // creating waiter
+        // creating seatingcontroller, pricingcontroller, ordercontroller, and customercontroller
         SeatingController seatingController = new SeatingController(restaurant);
         PricingController pricingController = new PricingController();
 
@@ -98,6 +98,7 @@ public class GameController {
         // creating cashier
         Cashier cashier = new Cashier(restaurant, seatingController);
 
+        // initialising turncontroller
         this.turnController = new TurnController(restaurant, customerController, orderController, host, waiter, chef, cashier,
                 gameApp);
 
@@ -169,7 +170,6 @@ public class GameController {
                         item.getPreparationUnits() == 1 ? "" : "s");
             }
         }
-
         System.out.println();
     }
 }

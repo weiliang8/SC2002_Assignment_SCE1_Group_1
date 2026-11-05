@@ -8,10 +8,7 @@ import entity.CustomerStatus;
 import entity.Restaurant;
 import entity.CustomerType;
 
-/**
- * Person 2 control logic. Restaurant and SeatingController belong to Person 5.
- * TurnController decides WHEN arrivals and each end-of-turn phase are called.
- */
+
 public class CustomerController {
     private final Restaurant restaurant;
     private final CustomerCreator customerCreator;
@@ -22,18 +19,11 @@ public class CustomerController {
                               SeatingController seatingController) {
         this.restaurant = Objects.requireNonNull(restaurant, "Restaurant is required.");
         this.customerCreator = new CustomerCreator();
-        //this.customerCreator = Objects.requireNonNull(creator, "CustomerCreator is required.");//need change
         this.seatingController = Objects.requireNonNull(seatingController,"SeatingController is required.");
-        // Normally empty at game start; avoid reusing IDs if records already exist.
         for (Customer customer : restaurant.getCustomers()) {
             nextCustomerId = Math.max(nextCustomerId, customer.getCustomerId() + 1);
         }
     }
-
-    /**
-     * Create ONE arrival. TurnController calls this only on 1,4,7,10,13,16.
-     * Restaurant.addCustomer must add to BOTH records and the waiting queue.
-     */
     public void processNewCustomer(CustomerType type) {
         Customer customer = customerCreator.createCustomer(type, nextCustomerId);
         restaurant.addCustomer(customer);
@@ -46,14 +36,12 @@ public class CustomerController {
         }
     }
 
-    /** Call exactly once each turn, after service and eating/payment. */
     public void applySatisfactionLoss() {
         for (Customer customer : snapshot()) {
             customer.applyWaitingPenalty();
         }
     }
 
-    /** Call after satisfaction loss. LEFT records stay available for reporting. */
     public void processAbandonment() {
 
     for (Customer customer : restaurant.getCustomers()) {
@@ -69,7 +57,6 @@ public class CustomerController {
     }
 }
 
-    /** Spreads a just-served customer's review to everyone still waiting. Returns the change applied. */
     public int applyReview(Customer reviewer) {
         int impact = reviewer.getReviewImpact();
         if (impact == 0) {
