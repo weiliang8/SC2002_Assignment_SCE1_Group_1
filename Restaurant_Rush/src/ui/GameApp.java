@@ -518,6 +518,7 @@ public class GameApp {
     }
 
     public void displayUpdatedSatisfaction(Restaurant restaurant){
+        
         System.out.println("\n--- Overall Customer and Order Status ---");
 
         for (Customer customer : restaurant.getCustomers()) {

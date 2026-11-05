@@ -285,7 +285,7 @@ public class TurnController {
         gameApp.displayTurnSummary(restaurant, currentTurn);
     }
 
-    public void runHappyHourChoice(){
+    private void runHappyHourChoice(){
         while(true){
             try{
                 HappyHourStatus choice = gameApp.getHappyHourChoice();
