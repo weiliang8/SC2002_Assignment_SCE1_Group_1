@@ -57,7 +57,7 @@ public class Restaurant {
         return Collections.newSetFromMap(new IdentityHashMap<Customer, Boolean>());
     }
 
-    /** Adds a newly arrived customer to the permanent records and waiting queue. */
+    // Adds a newly arrived customer to the permanent records and waiting queue. 
     public boolean addCustomer(Customer customer) {
         if (customer == null) {
             throw new IllegalArgumentException("Customer cannot be null.");
@@ -80,9 +80,9 @@ public class Restaurant {
         return waitingQueue.remove(customer);
     }
 
-    /**
-     * Returns the earliest registered customer who is eligible to pay this turn.
-     */
+    
+     //Returns the earliest registered customer who is eligible to pay this turn.
+     
     public Customer getOldestReadyPayer(int turn) {
         Customer oldest = null;
 
@@ -221,19 +221,5 @@ public class Restaurant {
         throw new IllegalArgumentException("Customer is not registered with this restaurant.");
     }
 
-    // public Customer getfirstWaitingCustomer() {
-    // Customer dequeued_customer = waitingQueue.peek();
-    // waitingQueue.remove();
-    // return dequeued_customer;
-    // }
-
-    // public Customer getFirstSeatedCustomer() {
-    // for (Customer customer : customers) {
-    // if (customer.getStatus() == CustomerStatus.SEATED
-    // && customer.getOrder() == null) {
-    // return customer;
-    // }
-    // }
-    // return null;
-    // }
+    
 }

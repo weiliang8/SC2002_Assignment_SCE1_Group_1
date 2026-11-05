@@ -1,7 +1,7 @@
 package entity;
 
 import java.util.ArrayList;
-//import java.util.Collections;
+import java.util.Collections;
 import java.util.List;
 
 public class Menu {
@@ -16,6 +16,6 @@ public class Menu {
     }
 
     public List<MenuItem> getItems() {
-        return items;
+        return Collections.unmodifiableList(items);
     }
 }

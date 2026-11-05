@@ -5,6 +5,10 @@ public class ComboMeal implements MenuItem {
     private final Dish secondMenuItem;
 
     public ComboMeal(Dish firstMenuItem, Dish secondMenuItem){
+        if(firstMenuItem == null || secondMenuItem == null){
+            throw new IllegalArgumentException("Condition requires two valid dishes.");
+        }
+        
         this.firstMenuItem = firstMenuItem;
         this.secondMenuItem = secondMenuItem;
     }

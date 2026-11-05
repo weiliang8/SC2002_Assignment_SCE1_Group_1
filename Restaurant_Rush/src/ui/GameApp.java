@@ -11,7 +11,6 @@ import entity.Restaurant;
 import entity.RestaurantStatistics;
 import entity.Table;
 import staff.HostAction;
-//import staff.Waiter;
 import staff.WaiterAction;
 import entity.Customer;
 import entity.CustomerStatus;
@@ -110,20 +109,6 @@ public class GameApp {
 
         System.out.print("\n");
     }
-
-    // Each customer's satisfaction ==> Venka: Already in customer n order status, i
-    // feel like dn, if needed can uncomment (Project doc say need this part though)
-    /*
-     * List<Customer> customers = restaurant.getCustomers();
-     * for (Customer customer : customers) {
-     * System.out.printf("Customer %d's satisfaction scores: %d\n",
-     * customer.getCustomerId(),
-     * customer.getSatisfaction());
-     * }
-     * System.out.print("\n");
-     * }
-     * 
-     */
 
     public HostAction getHostAction(){
         while (true) {
@@ -358,16 +343,7 @@ public class GameApp {
         return Id;
     }
 
-    /*
-     * public int getTargetId(){
-     * // get ID of customer or order manager wants to act on
-     * }
-     * 
-     * 
-     * public void displayError(String message){
-     * // display error i guess(if not needed will remove)
-     * }
-     */
+    
 
     public void displayTurnSummary(Restaurant restaurant, int currentTurn) {
         // summarises turn
@@ -392,17 +368,7 @@ public class GameApp {
         System.out.println("--------------------------------------------------------------------\n");
     }
 
-    /*
-     * public void displayStaffAvailability(boolean waiterAvailable, boolean
-     * chefAvailable, boolean cashierAvailable) {
-     * 
-     * System.out.println("--- STAFF AVAILABILITY ---");
-     * System.out.println("Waiter  : " + (waiterAvailable ? "AVAILABLE" : "DONE"));
-     * System.out.println("Chef    : " + (chefAvailable ? "AVAILABLE" : "DONE"));
-     * System.out.println("Cashier : " + (cashierAvailable ? "AVAILABLE" : "DONE"));
-     * 
-     * }
-     */
+    
     public void displayStaffTasks(int turn, Restaurant restaurant) {
         System.out.printf("--- STAFF TASKS AVALIABLE (TURN %d) ---\n\n", turn);
         displayHostTasks(restaurant);
@@ -523,28 +489,8 @@ public class GameApp {
         }
     }
 
-    public HappyHourStatus getHappyHourChoice(HappyHourStatus status, int happyHourTurnsLeft){
+    public HappyHourStatus getHappyHourChoice(){
         while(true){
-            if(status == HappyHourStatus.ENDED){
-                System.out.println("--------------------------------------------------------------------------------------------------------------");
-                System.out.println("\t\t\t\t\t Happy Hour: UNAVAILABLE ");
-                System.out.println("--------------------------------------------------------------------------------------------------------------\n");
-                return HappyHourStatus.ENDED;
-            }
-            if(happyHourTurnsLeft == 1){
-                System.out.println("\n--------------------------------------------------------------------------------------------------------------");
-                System.out.println("\t\t\t\t\tHAPPY HOUR: ACTIVE (ROUND 2/2)");
-                System.out.println("--------------------------------------------------------------------------------------------------------------\n");
-                System.out.println("\nUPDATING SATISFACTION SCORES......\n");
-                happyHourTurnsLeft--;
-                return HappyHourStatus.ACTIVE;
-            }
-            if(happyHourTurnsLeft == 0){
-                System.out.println("--------------------------------------------------------------------------------------------------------------");
-                System.out.println("\t\t\t\t\t Happy Hour: UNAVAILABLE ");
-                System.out.println("--------------------------------------------------------------------------------------------------------------\n");
-                return HappyHourStatus.ENDED;
-            }
             System.out.println("\u001B[4mWould you like to enable Happy Hour?\u001b[0m");
             System.out.println("(1) Yes");
             System.out.println("(2) No\n");
