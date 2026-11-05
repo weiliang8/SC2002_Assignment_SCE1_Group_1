@@ -4,7 +4,6 @@ import entity.Customer;
 import entity.Restaurant;
 import entity.Table;
 
-/** Coordinates table allocation while keeping the table list owned by Restaurant. */
 public class SeatingController {
     private final Restaurant restaurant;
 
