@@ -1,16 +1,17 @@
-# SC2002 Restaurant Rush: Stage 2 (Customer Behaviour Extension)
+# SC2002 Restaurant Rush: Stage 3 (Happy Hour Extension)
 
 A turn-based, command-line restaurant management game written in Java.
 You play the manager: staff time is limited, so you decide which
 customer gets the Waiter's attention and which order the Chef cooks
 first.
 
--   **Course:** SC2002 Object-Oriented Design & Programming, NTU
+-   **Course:** SC2002 Object-Oriented Design & Programming
+-   School: Nanyang Technological University (NTU)
 -   **Group:** SCE1 Group 1 __(AY 2026/2027 SEMESTER 1)__
 -   **Repository:**
     https://github.com/weiliang8/SC2002_Assignment_SCE1_Group_1
--   **This version:** Git tag `stage-2` (Stages 1 and 2: adds VIP and
-    Critic customers; no Host, ComboMeal or Happy Hour)
+-   **This version:** Git tag `stage-3`
+-   `Update`: From Stage 2 -> Stage 3 — added Host, ComboMeal, and HappyHour  
 
 **Group members**
 
@@ -90,27 +91,39 @@ java -cp bin ui.GameApp
 ## 3. Base setting (as per the brief)
 
 | Setting | Value |
-|---|---|
+|:---:|:---:|
 | Turns | 18 |
 | Tables | 2 |
-| Staff | 1 Waiter (1 task/turn), 1 Chef (1 prep unit/turn), 1 Cashier (1 payment/turn) |
+| Staff | 1 Host (1 seating/turn), 1 Waiter (1 task/turn), 1 Chef (1 prep unit/turn), 1 Cashier (1 payment/turn) |
 | Arrivals | 1 customer at the start of turns 1, 4, 7, 10, 13, and 16 (6 total): Regular, VIP, Regular, Critic, Regular, Regular |
 | Victory | ≥ 4 paid customers **and** revenue ≥ $45.00 **and** average satisfaction of paid customers ≥ 60 |
 
 ### Menu
 
 | Menu item | Price | Prep units |
-|---|---:|---:|
+|:---:|:---:|:---:|
 | Salad | $9.00 | 1 |
 | Burger | $15.00 | 1 |
 | Pasta | $18.00 | 2 |
+
+### Combo Meals
+
+
+Customers may order a combination of two dishes. Combo Meals receive a 10% discount from the combined price of the individual dishes.
+
+| Combo Meal | Price | Prep units |
+|:---:|:---:|:---:|
+| Salad + Burger | $21.60 | 2 |
+| Salad + Pasta | $24.30 | 3 |
+| Burger + Pasta | $29.70 | 3 |
+
 
 Money is stored as integer cents and displayed as dollars with two decimals.
 
 ### Customer types
 
 | Type | Satisfaction loss per waiting turn | Bill | Special behaviour |
-|---|---:|---|---|
+|---|:---:|---|---|
 | Regular | 8 | Full price | None |
 | VIP | 5 | 10% off (e.g. Burger **$13.50**) | None |
 | Critic | 12 | Full price | **Review on serving** (see below) |
@@ -119,8 +132,8 @@ Money is stored as integer cents and displayed as dollars with two decimals.
 posts a review that immediately affects every customer still waiting for
 a table or food.
 
-| Critic's satisfaction when served | Review | Effect on each waiting customer |
-|---|---|---|
+| Critic's satisfaction when served | Review | Effect on customer waiting/seated |
+|:---:|:---:|:---:|
 | ≥ 70 | Good | **+10** satisfaction (maximum 100) |
 | 50 – 69 | None | No effect |
 | < 50 | Bad | **−10** satisfaction (minimum 0) |
@@ -128,191 +141,302 @@ a table or food.
 Serving the Critic quickly helps the whole restaurant; neglecting the
 Critic hurts everyone still waiting.
 
+
 ### Customer food choice (deterministic rule)
 
-The manager never picks the food. Customer with ID `n` orders menu item `(n - 1) mod 3` in the order Salad, Burger, Pasta. The rule is the same for every customer type.
+The manager never picks the food. Customer with ID `n`, where n is greater than or equal to 1, orders menu item `(n - 1) mod 6` in the order. The rule is the same for every customer type.
 
-| Customer ID | 1 | 2 | 3 | 4 | 5 | 6 |
-|---|---:|---:|---:|---:|---:|---:|
-| Arrives turn | 1 | 4 | 7 | 10 | 13 | 16 |
-| Type | Regular | VIP | Regular | Critic | Regular | Regular |
-| Orders | Salad | Burger | Pasta | Salad | Burger | Pasta |
+| (n-1) mod 6 | Menu Item |
+|:---:|:---:|
+| = 0 | Salad |
+| = 1 | Burger |
+| = 2 | Pasta |
+| = 3 | Salad + Burger |
+| = 4 | Salad + Pasta |
+| = 5 | Burger + Pasta |
 
 The choice is printed when the Waiter takes the order. Because arrivals and food choices are fixed, **every run is reproducible from the manager's inputs alone** (no randomness, so no seed is needed).
 
-## 4. How to play
+| Customer ID | 1 | 2 | 3 | 4 | 5 | 6 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Arrives turn | 1 | 4 | 7 | 10 | 13 | 16 |
+| Type | Regular |VIP | Regular | Critic | Regular | Regular |
+| Orders | Salad | Burger | Pasta | Salad + Burger | Salad + Pasta | Burger + Pasta |
 
-Each turn runs in this order (all handled by `TurnController`):
+## 4. Happy Hour
 
-1. **Arrivals:** The scheduled customer joins the waiting queue with satisfaction 100.
+Happy Hour can be activated once per game and lasts for 2 consecutive turns.
 
-2. **Start-of-turn display:** Shows the turn number, revenue, average satisfaction (N/A if nobody has paid), waiting queue, every customer's type / status / satisfaction / order status, pending orders, table availability, and currently available staff tasks.
+| Feature | Effect |
+|---|---|
+| Order discount | 20% off new orders taken during Happy Hour |
+| VIP discount | Applied before the Happy Hour discount |
+| Satisfaction recovery | Customers waiting for a table, waiting to order, or waiting for food recover 15 satisfaction points, up to a maximum of 100, at the start of each Happy Hour turn |
+| Usage | Once per game; unavailable after it ends |
 
-3. **Waiter** (choose one action, or Wait):
+## 5. How to play
+
+Each turn runs in the following order, as handled by `TurnController`.
+
+1. **Arrivals (automatic):** The scheduled customer joins the waiting queue with satisfaction 100.
+
+2. **Start-of-turn display (automatic):**
+
+   > **Game state**
+   > - Turn number and revenue
+   > - Average satisfaction (N/A if nobody has paid)
+   > - Waiting queue
+   > - Each customer's type, status, satisfaction, and order status
+   > - Pending orders and table availability
+   > - Currently available staff tasks
+
+3. **Happy Hour (player choice and automatic effects):**
+
+   > **Happy Hour**
+   > - The player chooses whether to activate Happy Hour, if it is still available.
+   > - While active, its satisfaction recovery and discount effects are applied according to the game rules.
+
+4. **Staff task display (automatic):** The game displays the available staff tasks before the staff actions begin.
+
+5. **Host (player choice — choose one action, or Wait):**
 
    | Choice | Action |
-   |---|---|
+   |:---:|:---:|
+   | `1` | Seat a queued customer at a free table |
+   | `2` | Wait |
+
+6. **Waiter (player choice — choose one action, or Wait):**
+
+   | Choice | Action |
+   |:---:|:---:|
    | `1` | Seat a queued customer at a free table |
    | `2` | Take a seated customer's order |
    | `3` | Serve a READY order (if the customer is a Critic, its review is applied immediately) |
    | `4` | Wait |
 
-4. **Chef** (choose one action, or Wait):
+7. **Chef (player choice — choose one action, or Wait):**
 
    | Choice | Action |
-   |---|---|
-   | `1` | Prepare one unit of a pending order (including an order taken by the Waiter this turn) |
+   |:---:|:---:|
+   | `1` | Prepare one unit of a pending order, including an order taken by the Waiter this turn |
    | `2` | Wait |
 
-5. **Eating and payment:** A customer served on an earlier turn becomes `READY_TO_PAY`. The Cashier automatically collects payment from one eligible customer, oldest first. A customer who becomes `READY_TO_PAY` this turn can pay no earlier than the next turn.
+8. **Eating and payment (automatic):**
 
-6. **Waiting and abandonment:** Every unserved waiting or seated customer loses satisfaction according to their type (Regular 8, VIP 5, Critic 12; minimum 0). At 0, they leave without paying; their order is cancelled and their table is freed.
+   > **Eating and payment**
+   > - A customer served on an earlier turn becomes `READY_TO_PAY`.
+   > - The Cashier automatically collects payment from one eligible customer, oldest first.
+   > - A customer who becomes `READY_TO_PAY` this turn can pay no earlier than the next turn.
 
-7. **End-of-turn summary:** Shows the served count, unhappy departures, revenue, average satisfaction of paid customers, and turns used.
+9. **Satisfaction loss and abandonment (automatic):**
+
+   > **Satisfaction loss**
+   > - Every unserved waiting or seated customer loses satisfaction according to their type:
+   >   - Regular: 8
+   >   - VIP: 5
+   >   - Critic: 12
+   > - Satisfaction cannot drop below 0.
+   > - At 0 satisfaction, the customer leaves without paying, their order is cancelled, and their table is freed.
+
+10. **End-of-turn summary (automatic):** Shows the served count, unhappy departures, revenue, average satisfaction of paid customers, and turns used.
 
 After turn 18, the game shows **Victory** or **Defeat**, listing any missed targets in the case of defeat. The game always plays all 18 turns.
 
 ### Timing rules that matter
 
-- The Waiter acts **before** the Chef, so a dish finished this turn can only be served on the next turn at the earliest.
-- If a dish is served on turn *s*, the customer becomes ready to pay on turn *s* + 1, and the Cashier can collect payment on turn *s* + 2 at the earliest.
-- Satisfaction only drops while a customer is waiting for a table or food. Served, eating, and ready-to-pay customers lose no satisfaction.
-- The VIP discount is locked when the order is taken. The Critic's review uses its satisfaction at the moment it is served.
-- Invalid choices (e.g. seating with no free table, serving a dish that is not READY, or non-numeric input) display the reason and prompt the player again. **The staff task is not used up.**
-- The customer arriving on turn 16 cannot finish paying within the 18-turn game, so at most 5 customers can pay. This is intentional.
+> **Staff action order**
+> - The Host acts before the Waiter, and the Waiter acts before the Chef.
+> - Since the Waiter acts before the Chef, a dish finished this turn can only be served on the next turn at the earliest.
 
-## 5. Reproducible test runs
+> **Eating and payment**
+> - If a dish is served on turn *s*, the customer becomes ready to pay on turn *s* + 1.
+> - The Cashier can collect payment on turn *s* + 2 at the earliest.
 
-Scripted inputs are in [`Testcases/`](Testcases). Each file is the exact
-sequence of keystrokes (one per line) for a full 18-turn game. Compile
-first (Section 2).
+> **Satisfaction and reviews**
+> - Satisfaction loss occurs during automatic end-of-turn processing.
+> - Served, eating, and ready-to-pay customers lose no satisfaction.
+> - The VIP discount is locked when the order is taken.
+> - The Critic's review uses their satisfaction at the moment they are served.
 
-then 
+> **Invalid actions and game limit**
+> - Invalid choices (e.g. seating with no free table, serving a dish that is not READY, or non-numeric input) display the reason and prompt the player again. **The staff task is not used up.**
+> - The customer arriving on turn 16 cannot finish paying within the 18-turn game, so at most 5 customers can pay. This is intentional.
 
-``` run
-cd Restaurant_Rush/
-```
+## 6. Reproducible Test Runs
 
-then 
+The following test cases can be used to reproduce and verify the Stage 3 gameplay scenarios. Each test case uses a scripted sequence of player inputs.
+
+### Running the Test Cases
+
+Run the program from the project root directory.
 
 **macOS / Linux**
-
-``` bash
-# Victory run (Critic good review)
-java -cp bin ui.GameApp < ../Testcases/stage2_victory_critic_good_review.txt
-
-# Victory run (Critic bad review)
-java -cp bin ui.GameApp < ../Testcases/stage2_victory_critic_bad_review.txt
-
-# Defeat run
-java -cp bin ui.GameApp < ../Testcases/stage2_defeat_no_service.txt
+```bash
+javac *.java
+java Main < Testcases/stage3_victory_happy_hour.txt
+java Main < Testcases/stage3_defeat_happy_hour_notEnoughPayer.txt
 ```
 
-or
-
-**Windows CMD**
-
-``` bat
-:: Victory run (Critic good review)
-java -cp bin ui.GameApp < ..\Testcases\stage2_victory_critic_good_review.txt
-
-:: Victory run (Critic bad review)
-java -cp bin ui.GameApp < ..\Testcases\stage2_victory_critic_bad_review.txt
-
-:: Defeat run
-java -cp bin ui.GameApp < ..\Testcases\stage2_defeat_no_service.txt
+**Windows Command Prompt**
+```bat
+javac *.java
+java Main < Testcases\stage3_victory_happy_hour.txt
+java Main < Testcases\stage3_defeat_happy_hour_notEnoughPayer.txt
 ```
 
-or
-
-**Windows PowerShell** (`<` redirection is not supported, so pipe the
-file in)
-
-``` powershell
-# Victory run (Critic good review)
-Get-Content ..\Testcases\stage2_victory_critic_good_review.txt | java -cp bin ui.GameApp
-
-# Victory run (Critic bad review)
-Get-Content ..\Testcases\stage2_victory_critic_bad_review.txt | java -cp bin ui.GameApp
-
-# Defeat run
-Get-Content ..\Testcases\stage2_defeat_no_service.txt | java -cp bin ui.GameApp
+**Windows PowerShell**
+```powershell
+javac *.java
+Get-Content Testcases\stage3_victory_happy_hour.txt | java Main
+Get-Content Testcases\stage3_defeat_happy_hour_notEnoughPayer.txt | java Main
 ```
 
-__The following test runs demonstrate the main victory and defeat scenarios for Stage 2.__
+### Test Cases and Expected Results
 
-| Test | File | What it demonstrates | Expected final result |
-|---|---|---|---|
-| **Victory (good review)** | `stage2_victory_critic_good_review.txt` | The Critic is seated on arrival (turn 10) and served on turn 12 at satisfaction 76, so it posts a good review: Customer 3, still waiting for its Pasta, goes from 60 to 70. The VIP pays **$13.50** for a Burger. On turn 14 both tables are full, so the Waiter can only wait. | **Victory** — 4 paid, 0 unhappy departures, revenue **$49.50**, average satisfaction **78.00**, 18 turns |
-| **Victory (bad review)** | `stage2_victory_critic_bad_review.txt` | The Critic is left until turn 15 and served at satisfaction 40, so it posts a bad review: Customer 5, seated and waiting for food, goes from 84 to 74. | **Victory** — 5 paid, 0 unhappy departures, revenue **$64.50**, average satisfaction **71.20**, 18 turns |
-| **Defeat** | `stage2_defeat_no_service.txt` | The Waiter and Chef wait every turn. Customer 1 (Regular) leaves at the end of turn 13 and the Critic leaves at the end of turn 18 (12 per turn). Nobody is served, so no review is posted. | **Defeat** — 0 paid, 2 unhappy departures, revenue **$0.00**, average satisfaction **N/A**; all three targets are not met |
+| Test Case | Scenario | Expected Result |
+|---|---|---|
+| `stage3_victory_happy_hour.txt` | Activates Happy Hour on Turn 13 and orders a discounted Pasta on Turn 14. | Happy Hour runs for Turns 13–14. Eligible customers recover 15 satisfaction at the start of each active turn, capped at 100. The Critic gives a GOOD review when served on Turn 13. The Pasta order is discounted from $18.00 to $14.40. The game ends in Victory with 4 paid customers, $58.50 revenue, and 83.50 average satisfaction. |
+| `stage3_defeat_happy_hour_notEnoughPayer.txt` | Activates Happy Hour on Turn 13 and orders a discounted Salad+Pasta combo on Turn 14. | Happy Hour runs for Turns 13–14. Eligible customers recover 15 satisfaction at the start of each active turn, capped at 100. The Salad+Pasta combo is discounted from $24.30 to $19.44. The game ends in Defeat because only 3 customers paid, below the required minimum of 4. |
+
+### Verified Final Results
+
+| Metric | Victory Test Case | Defeat Test Case |
+|---|---|---|
+| Turns played | 18 | 18 |
+| Customers served | 4 | 3 |
+| Customers paid | 4 | 3 |
+| Unhappy departures | 0 | 1 |
+| Total revenue | $58.50 | $53.10 |
+| Average satisfaction | 83.50 | 85.00 |
+| Outcome | Victory | Defeat |
 
 All outputs were re-verified on a clean compile of this tag.
 
 > The Stage 1 test files (`stage1_*.txt`) expect the Stage 1 arrival
 > schedule (all Regular customers). Run them at tag `stage-1`
-> (`git checkout stage-1`); their expected results are listed in the
+> ; their expected results are listed in the
 > README at that tag.
+>
+> The Stage 2 test files (`stage2_*.txt`) expect the Stage 2 game rules.
+> Run them at tag `stage-2`; their expected
+> results are listed in the README at that tag.
+## 7. Project Structure
 
-## 6. Project structure
-
-``` text
+```text
 SC2002_Assignment_SCE1_Group_1/
 ├── README.md
-├── Testcases/                      scripted victory and defeat inputs (Stage 1 and Stage 2)
+│
+├── Testcases/                                      # Scripted test inputs
+│   ├── stage1_defeat_abandoned_order.txt            # Stage 1: defeat due to abandonment
+│   ├── stage1_victory_with_invalid_seat_selection_tables_full_at_turn7.txt
+│   │                                               # Stage 1: victory with invalid seating input
+│   ├── stage2_defeat_no_service.txt                 # Stage 2: defeat due to no service
+│   ├── stage2_victory_critic_bad_review.txt          # Stage 2: victory with a Bad Critic review
+│   ├── stage2_victory_critic_good_review.txt         # Stage 2: victory with a Good Critic review
+│   ├── stage3_defeat_happy_hour_notEnoughPayer.txt   # Stage 3: defeat with fewer than 4 paid customers
+│   └── stage3_victory_happy_hour.txt                 # Stage 3: victory with Happy Hour
+│
 └── Restaurant_Rush/
     ├── src/
-    │   ├── ui/          GameApp                      <<boundary>>  CLI input / display, main()
-    │   ├── controller/  GameController               game loop (18 turns), arrival schedule, result check
-    │   │                TurnController               runs the 6-step turn sequence
-    │   │                CustomerController           arrivals, waiting penalty, abandonment, Critic review
-    │   │                CustomerCreator              creates customers by type (factory)
-    │   │                SeatingController            table allocation / release
-    │   │                OrderController              pending and ready order queues
-    │   │                PricingController, PricingPolicy, StandardPricingPolicy   bill calculation
-    │   ├── staff/       Waiter, Chef, Cashier        staff capacity (1 task per turn)
-    │   │                WaiterAction, InvalidActionException
-    │   └── entity/      Restaurant, RestaurantStatistics, Table
-    │                    Customer (abstract), RegularCustomer, VIPCustomer, CriticCustomer
-    │                    CustomerType, CustomerStatus
-    │                    Order, OrderStatus, MenuItem (interface), Dish, Menu, GameResult
-    └── bin/             compiled classes (git-ignored)
+    │   ├── ui/
+    │   │   └── GameApp.java                          # CLI input/output and main()
+    │   │
+    │   ├── controller/
+    │   │   ├── GameController.java                   # Game loop, arrival schedule, result check
+    │   │   ├── TurnController.java                   # Turn sequence and phase coordination
+    │   │   ├── CustomerController.java                # Arrivals, satisfaction, abandonment, Critic review
+    │   │   ├── CustomerCreator.java                   # Creates customer objects by type
+    │   │   ├── SeatingController.java                 # Table allocation and release
+    │   │   ├── OrderController.java                    # Pending and ready order queues
+    │   │   ├── PricingController.java                  # Order pricing and bill calculation
+    │   │   ├── PricingPolicy.java                      # Pricing strategy interface
+    │   │   ├── StandardPricingPolicy.java              # Standard pricing implementation
+    │   │   └── HappyHourPolicy.java                    # Happy Hour pricing and effects
+    │   │
+    │   ├── staff/
+    │   │   ├── Host.java                              # Customer seating
+    │   │   ├── HostAction.java                         # Host action types
+    │   │   ├── Waiter.java                             # Order-taking and serving
+    │   │   ├── WaiterAction.java                       # Waiter action types
+    │   │   ├── Chef.java                               # Food preparation
+    │   │   ├── Cashier.java                            # Payment processing
+    │   │   └── InvalidActionException.java             # Invalid staff action handling
+    │   │
+    │   └── entity/
+    │       ├── Restaurant.java                         # Restaurant state and coordination
+    │       ├── RestaurantStatistics.java                # Revenue and satisfaction statistics
+    │       ├── Table.java                              # Table state
+    │       ├── Customer.java                           # Abstract customer
+    │       ├── RegularCustomer.java                    # Regular customer behavior
+    │       ├── VIPCustomer.java                        # VIP customer behavior and discount
+    │       ├── CriticCustomer.java                     # Critic review behavior
+    │       ├── CustomerType.java                       # Customer type enumeration
+    │       ├── CustomerStatus.java                     # Customer status enumeration
+    │       ├── Order.java                              # Order state and preparation progress
+    │       ├── OrderStatus.java                        # Order status enumeration
+    │       ├── MenuItem.java                           # Menu item interface
+    │       ├── Dish.java                               # Individual dish
+    │       ├── ComboMeal.java                          # Combination meal
+    │       ├── Menu.java                               # Available menu items
+    │       ├── HappyHourStatus.java                    # Happy Hour state
+    │       └── GameResult.java                         # Game outcome
+    │
+    └── bin/                                            # Compiled classes (git-ignored)
 ```
 
-### Where the rules live
+## Where the Rules Live
 
 | Responsibility | Class |
 |---|---|
+| Game loop, arrival schedule, and final result check | `GameController` |
 | Turn order and phase sequencing | `TurnController` |
-| Win / lose check (4 paid, $45.00, average satisfaction ≥ 60) | `GameController.checkResult()` |
-| One task per turn and validity checks | `Waiter`, `Chef`, `Cashier` |
-| Satisfaction, status transitions, food choice | `Customer` and its subclasses |
-| Waiting penalty per type | `RegularCustomer` (8), `VIPCustomer` (5), `CriticCustomer` (12) |
-| VIP discount | `VIPCustomer.applyDiscount()`, applied by `PricingController` |
-| Critic review | `CriticCustomer.getReviewImpact()`, applied by `CustomerController.applyReview()` |
-| Mapping a `CustomerType` to a class | `CustomerCreator.createCustomer()` |
-| Order and preparation-unit progress | `Order` |
-| Revenue and average satisfaction | `RestaurantStatistics` (via `Restaurant`) |
-| Input and output only, no game rules | `GameApp` |
+| Victory / defeat criteria (4 paid customers, $45.00 revenue, average satisfaction ≥ 60) | `GameController.checkResult()` |
+| Customer arrivals, waiting penalties, abandonment, and Critic review | `CustomerController` |
+| Customer type to subclass mapping | `CustomerCreator.createCustomer()` |
+| Table allocation and release | `SeatingController` |
+| Pending orders and ready orders | `OrderController` |
+| Staff actions and per-turn task limits | `Host`, `Waiter`, `Chef`, `Cashier` |
+| Customer satisfaction, status transitions, and food choice | `Customer` and its subclasses |
+| Waiting penalty by customer type | `RegularCustomer` (8), `VIPCustomer` (5), `CriticCustomer` (12) |
+| VIP discount | `VIPCustomer`, applied through `PricingController` |
+| Critic review impact | `CriticCustomer`, applied by `CustomerController` |
+| Order status and preparation progress | `Order` |
+| Standard pricing and bill calculation | `PricingPolicy`, `StandardPricingPolicy`, `PricingController` |
+| Happy Hour state | `HappyHourStatus` |
+| Happy Hour activation and turn timing | `TurnController` |
+| Happy Hour satisfaction recovery | `CustomerController` |
+| Happy Hour pricing effects | `HappyHourPolicy`, applied through `PricingController` |
+| Revenue and average satisfaction | `RestaurantStatistics`, through `Restaurant` |
+| Input and output only; no game rules | `GameApp` |
 
-### Stage 1 OO notes
+## Stage 1 OO Notes
 
-| OO concept | Explanation |
+| OO Concept | Explanation |
 |---|---|
-| **Inheritance / polymorphism** | `Customer` is abstract. `RegularCustomer` supplies the 8-point waiting penalty, and `chooseMenuItem` can be overridden by later customer types. `MenuItem` is an interface implemented by `Dish`. |
-| **Encapsulation** | State changes go through guarded methods (`markSeated`, `markServed`, `markPaid`, `leave`) that throw if the transition is illegal. |
-| **Composition** | `Restaurant` owns the `Menu`, tables, customer records, and `RestaurantStatistics`. |
-| **Control / boundary separation** | `GameApp` only collects input and prints state, with rules kept in controllers and entities. |
+| Inheritance / polymorphism | `Customer` is abstract. `RegularCustomer` supplies the 8-point waiting penalty, and `chooseMenuItem()` can be overridden by later customer types. `MenuItem` is an interface implemented by `Dish`. |
+| Encapsulation | State changes go through guarded methods such as `markSeated()`, `markServed()`, `markPaid()`, and `leave()`, that throw if transition is illegal. |
+| Composition | `Restaurant` owns the `Menu`, tables, customer records, and `RestaurantStatistics`. |
+| Control / boundary separation | `GameApp` collects input and prints state, with rules kept in controllers and entities. |
 
-### Stage 2 OO notes
+## Stage 2 OO Notes
 
-| OO concept | Explanation |
+| OO Concept | Explanation |
 |---|---|
-| **Polymorphism** | `Customer` gains two hook methods with a "no effect" default: `applyDiscount()` and `getReviewImpact()`. `VIPCustomer` and `CriticCustomer` override them. `PricingController` and `CustomerController` call the hooks on any `Customer` without checking its type. |
-| **Open / closed** | A new customer type is added by writing a subclass and registering it in `CustomerType` and `CustomerCreator`. The staff classes, `Order` and the turn sequence are unchanged. |
-| **Factory** | `CustomerCreator.createCustomer(type, id)` is the only place that maps a `CustomerType` to a subclass. |
+| Polymorphism | `Customer` defines `applyDiscount()` and `getReviewImpact()` with "no-effect" default behavior. `VIPCustomer` and `CriticCustomer` override them. `PricingController` and `CustomerController` call the hooks on any `Customer` without checking its type. |
+| Open / closed | A new customer type can be added by creating a subclass and registering it in `CustomerType` and `CustomerCreator`, The staff classes `Order` and the turn sequence are unchanged. |
+| Factory | `CustomerCreator.createCustomer(type, id)` is the only place that maps a `CustomerType` to a subclass. |
 
-## 7. Checklist (against the brief)
+## Stage 3 OO Notes
+
+| OO Concept | Explanation |
+|---|---|
+| Strategy pattern | `PricingPolicy` defines the pricing strategy interface, while `StandardPricingPolicy` provides the standard pricing implementation. `PricingController` delegates pricing calculations to the policy. |
+| Policy-based behavior | `HappyHourPolicy` encapsulates Happy Hour pricing effects, keeping them separate from the main game loop. |
+| Encapsulation | `HappyHourStatus` represents Happy Hour state, while activation and turn timing are managed through the turn flow rather than directly by `GameApp`. |
+| Separation of concerns | `TurnController` manages Happy Hour timing, `CustomerController` handles satisfaction recovery, and pricing components handle discounts. |
+| Extensibility | Pricing behavior can be changed through pricing policy implementations without rewriting the controllers that request price calculations. |
+
+## 8. Checklist (against the brief)
 
 ### Stage 1
 
@@ -341,19 +465,35 @@ SC2002_Assignment_SCE1_Group_1/
 -   [x] Same win and lose criteria as Stage 1
 -   [x] No Stage 3 features
 
-## 8. Stage changes
+### Stage 3
 
-| Transition | New files | Changed / deleted files and reasons | Commit / comparison link |
-|---|---|---|---|
-| Stage 1 → 2 (`stage-2`) | `VIPCustomer`, `CriticCustomer`, 3 Stage 2 test inputs | 7 files changed, none deleted (Section 8.1) | [stage-1...stage-2](https://github.com/weiliang8/SC2002_Assignment_SCE1_Group_1/compare/stage-1...stage-2) |
-| Stage 2 → 3 (`stage-3`) | *TBC* | *TBC* | *TBC* |
+- [x] Compiles and runs independently at tag `stage-3`
+- [x] Includes the Happy Hour feature, available once per game for two consecutive turns
+- [x] Allows the player to choose whether to activate Happy Hour when available
+- [x] Applies Happy Hour satisfaction recovery to eligible customers, capped at 100
+- [x] Applies the Happy Hour discount to new orders, alongside the existing VIP discount
+- [x] Preserves the same customer arrival schedule, turn sequence, and victory / defeat criteria as Stage 2
+- [x] Keeps customer satisfaction, order processing, staff actions, and payment rules consistent with the existing game flow
+- [x] Uses the pricing policy design to separate pricing rules from the main game logic
+- [x] Includes a reproducible Happy Hour victory test case (`stage3_victory_happy_hour.txt`)
+- [x] Includes a reproducible Happy Hour defeat test case (`stage3_defeat_happy_hour_notEnoughPayer.txt`)
+- [x] Victory test meets the required minimum of 4 paid customers
+- [x] Defeat test demonstrates failure to meet the required minimum of 4 paid customers
+- [x] All Stage 3 test outputs were re-verified on a clean compile of this tag
 
-### 8.1 Stage 1 → Stage 2
+## 9. Stage changes
+
+| Transition | New files | Changed / deleted files | Commit / comparison link |
+|:---:|:---:|:---:|:---:|
+| Stage 1 → 2 (`stage-2`) | `VIPCustomer`, `CriticCustomer`, 3 Stage 2 test inputs | 7 files changed, none deleted (Section 9.1) | [stage-1...stage-2](https://github.com/weiliang8/SC2002_Assignment_SCE1_Group_1/compare/stage-1...stage-2) |
+| Stage 2 → 3 (`stage-3`) | 7 files added: `HappyHourPolicy.java`, `ComboMeal.java`, `HappyHourStatus.java`, `Host.java`, `HostAction.java`, and 2 Stage 3 test inputs | 8 existing files modified, none deleted (Section 9.2) | *TBC* |
+
+### 9.1 Stage 1 → Stage 2
 
 **New files**
 
 | File | Purpose |
-|---|---|
+|:---:|:---:|
 | `entity/VIPCustomer.java` | Extends `Customer`. Loses 5 satisfaction per waiting turn and overrides `applyDiscount()` to give 10% off. |
 | `entity/CriticCustomer.java` | Extends `Customer`. Loses 12 satisfaction per waiting turn and overrides `getReviewImpact()` to return +10, −10 or 0. |
 | `Testcases/stage2_*.txt` | Reproducible base-setting runs with one VIP and one Critic (Section 5). |
@@ -361,7 +501,7 @@ SC2002_Assignment_SCE1_Group_1/
 **Changed files**
 
 | File | Change | Reason |
-|---|---|---|
+|:---:|:---:|:---:|
 | `entity/Customer.java` | Added `applyDiscount()` and `getReviewImpact()`. Both default to "no effect". | Hooks for subclasses, so pricing and reviews ask the customer object instead of checking its type. |
 | `entity/CustomerType.java` | Added `VIP` and `CRITIC`. | Registration of the new types. |
 | `controller/CustomerCreator.java` | Replaced `createRegularCustomer()` with `createCustomer(type, id)`. | The factory is now the only place that maps a type to a subclass. |
@@ -373,10 +513,39 @@ SC2002_Assignment_SCE1_Group_1/
 No files were deleted. The staff classes, `Order`, `Restaurant` and
 `GameApp` are unchanged.
 
-## 9. Video timestamps (to be filled in)
+### 9.2 Stage 2 → Stage 3
+
+**New files**
+
+| File | Purpose |
+|:---:|:---:|
+| `controller/HappyHourPolicy.java` | Implements the Happy Hour pricing policy, applying a 20% discount to new orders during the active period. |
+| `entity/ComboMeal.java` | Represents combo meals and their discounted prices and preparation requirements. |
+| `entity/HappyHourStatus.java` | Tracks whether Happy Hour is available, active, or has ended. |
+| `staff/Host.java` | Represents the Host staff member, responsible for seating customers. |
+| `staff/HostAction.java` | Defines the actions available to the Host. |
+| `Testcases/stage3_victory_happy_hour.txt` | Reproducible Stage 3 run demonstrating a Happy Hour victory. |
+| `Testcases/stage3_defeat_happy_hour_notEnoughPayer.txt` | Reproducible Stage 3 run demonstrating defeat when fewer than four customers pay. |
+
+**Changed files**
+
+| File | Change | Reason |
+|:---:|:---:|:---:|
+| `controller/GameController.java` | Updated game setup and control flow for Stage 3. | Integrates the Host and Happy Hour into the existing game flow. |
+| `controller/PricingController.java` | Updated bill calculation to apply the pricing policies in the required order. | Applies the existing customer discount before the Happy Hour discount. |
+| `controller/TurnController.java` | Updated turn processing to handle Happy Hour activation, duration, and satisfaction recovery. | Integrates the two-turn Happy Hour into the turn sequence. |
+| `entity/Customer.java` | Updated customer state and satisfaction handling. | Supports the Stage 3 customer lifecycle and Happy Hour effects. |
+| `entity/Menu.java` | Updated the menu to include combo meals. | Makes combo meals available for ordering. |
+| `entity/Restaurant.java` | Updated restaurant state and operations. | Supports the Stage 3 game flow and Happy Hour state. |
+| `staff/Waiter.java` | Updated waiter actions. | Supports the Stage 3 order and service flow. |
+| `ui/GameApp.java` | Updated the user interface for Host actions, combo meals, and Happy Hour. | Allows the player to interact with the new Stage 3 features. |
+
+No files were deleted.
+
+## 10. Video timestamps (to be filled in)
 
 | # | Segment | Timestamp | Presenter |
-|---:|---|---|---|
+|:---:|:---:|:---:|:---:|
 | 1 | Game launching from the submitted project | *TBC* | *TBC* |
 | 2 | Meaningful manager choices, including a constrained-staff decision | *TBC* | *TBC* |
 | 3 | A dish going READY → SERVED → payment | *TBC* | *TBC* |
