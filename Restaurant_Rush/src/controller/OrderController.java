@@ -15,7 +15,7 @@ public class OrderController {
     // Customer places an order
     public void addOrder(Order order) {
         if (order != null) {
-            pendingOrders.offer(order); //add element to tail of queue
+            pendingOrders.offer(order);
             totalOrderCount++;
         }
     }
@@ -63,7 +63,7 @@ public void markOrderReady(Order order) {
 
     // Waiter takes the earliest ready order
     public Queue<Order> getAllReadyOrder() {
-        return readyOrders; // get first item from queue and remove it
+        return readyOrders;
     }
 
     public int getTotalOrderCount(){
