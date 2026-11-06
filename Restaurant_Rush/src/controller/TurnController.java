@@ -248,7 +248,7 @@ public class TurnController {
                                     order.getUnitsTotal(),
                                     order.getStatus());
 
-                            return; 
+                            return;
                         }
 
                     } catch (InvalidActionException ex) {

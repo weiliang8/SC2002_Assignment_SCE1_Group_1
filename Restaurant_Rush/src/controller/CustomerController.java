@@ -8,7 +8,6 @@ import entity.CustomerStatus;
 import entity.Restaurant;
 import entity.CustomerType;
 
-
 public class CustomerController {
     private final Restaurant restaurant;
     private final CustomerCreator customerCreator;
@@ -20,10 +19,12 @@ public class CustomerController {
         this.restaurant = Objects.requireNonNull(restaurant, "Restaurant is required.");
         this.customerCreator = new CustomerCreator();
         this.seatingController = Objects.requireNonNull(seatingController,"SeatingController is required.");
+        
         for (Customer customer : restaurant.getCustomers()) {
             nextCustomerId = Math.max(nextCustomerId, customer.getCustomerId() + 1);
         }
     }
+
     public void processNewCustomer(CustomerType type) {
         Customer customer = customerCreator.createCustomer(type, nextCustomerId);
         restaurant.addCustomer(customer);
@@ -56,7 +57,7 @@ public class CustomerController {
         }
     }
 }
-
+    
     public int applyReview(Customer reviewer) {
         int impact = reviewer.getReviewImpact();
         if (impact == 0) {

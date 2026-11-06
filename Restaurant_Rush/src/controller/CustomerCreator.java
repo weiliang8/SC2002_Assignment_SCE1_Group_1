@@ -6,7 +6,6 @@ import entity.CustomerType;
 import entity.RegularCustomer;
 import entity.VIPCustomer;
 
-
 public class CustomerCreator {
     public CustomerCreator() {
     }

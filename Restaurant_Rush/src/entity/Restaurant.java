@@ -55,7 +55,7 @@ public class Restaurant {
         return Collections.newSetFromMap(new IdentityHashMap<Customer, Boolean>());
     }
 
-    // Adds a newly arrived customer to the permanent records and waiting queue. 
+    //Adds a newly arrived customer to the permanent records and waiting queue.
     public boolean addCustomer(Customer customer) {
         if (customer == null) {
             throw new IllegalArgumentException("Customer cannot be null.");

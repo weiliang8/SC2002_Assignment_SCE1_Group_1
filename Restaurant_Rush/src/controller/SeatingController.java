@@ -4,7 +4,6 @@ import entity.Customer;
 import entity.Restaurant;
 import entity.Table;
 
-
 public class SeatingController {
     private final Restaurant restaurant;
 

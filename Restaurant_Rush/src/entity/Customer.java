@@ -3,7 +3,6 @@ package entity;
 import java.util.List;
 import java.util.Objects;
 
-
 public abstract class Customer {
     private final int customerId;
     private CustomerType customerType;
@@ -34,7 +33,6 @@ public abstract class Customer {
         return waitingPenalty;
     }
 
-    
     public void applyWaitingPenalty() {
         if (isWaitingForService()) {
             adjustSatisfaction(-getWaitingPenalty());
@@ -51,17 +49,14 @@ public abstract class Customer {
                 "Chosen menu item must not be null.");
     }
 
-    
     public int applyDiscount(int priceCents) {
         return priceCents;
     }
 
-    
     public int getReviewImpact() {
         return 0;
     }
 
-    
     public int adjustSatisfaction(int amount) {
         //Terminal customer records must not be changed or revived.
         if (status != CustomerStatus.PAID && status != CustomerStatus.LEFT) {
@@ -105,8 +100,8 @@ public abstract class Customer {
         status = CustomerStatus.SEATED;
     }
 
-    public void markServed(int turn) {
-        requirePositiveTurn(turn);
+     public void markServed(int turn) {
+         requirePositiveTurn(turn);
         require(status == CustomerStatus.SEATED && order != null,
                  "Customer must be seated with an order before serving.");
         require(order.getStatus() == OrderStatus.READY
