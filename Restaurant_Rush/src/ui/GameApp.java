@@ -5,11 +5,12 @@ import java.util.Scanner;
 import controller.GameController;
 import controller.OrderController;
 import entity.GameResult;
+import entity.HappyHourStatus;
 import entity.Order;
 import entity.Restaurant;
 import entity.RestaurantStatistics;
 import entity.Table;
-//import staff.Waiter;
+import staff.HostAction;
 import staff.WaiterAction;
 import entity.Customer;
 import entity.CustomerStatus;
@@ -109,20 +110,26 @@ public class GameApp {
         System.out.print("\n");
     }
 
-    // Each customer's satisfaction ==> Venka: Already in customer n order status, i
-    // feel like dn, if needed can uncomment (Project doc say need this part though)
-    /*
-     * List<Customer> customers = restaurant.getCustomers();
-     * for (Customer customer : customers) {
-     * System.out.printf("Customer %d's satisfaction scores: %d\n",
-     * customer.getCustomerId(),
-     * customer.getSatisfaction());
-     * }
-     * System.out.print("\n");
-     * }
-     * 
-     */
+    public HostAction getHostAction(){
+        while (true) {
+            System.out.println("\n\u001b[4mWhat would you like the host to do?\u001b[0m");
+            System.out.println("1. Seat a customer in the queue");
+            System.out.println("2. Wait\n");
 
+            int choice = readInt("Enter your choice (1 or 2): ");
+
+            switch (choice) {
+                case 1 -> {
+                    return HostAction.SEAT_CUSTOMER;
+                }
+                case 2 -> {
+                    return HostAction.WAIT;
+                }
+                default -> System.out.println("Invalid Choice. Try again.");
+            }
+        }
+    }
+    
     public WaiterAction getWaiterAction() {
         // get waiteraction
         while (true) {
@@ -336,16 +343,7 @@ public class GameApp {
         return Id;
     }
 
-    /*
-     * public int getTargetId(){
-     * // get ID of customer or order manager wants to act on
-     * }
-     * 
-     * 
-     * public void displayError(String message){
-     * // display error i guess(if not needed will remove)
-     * }
-     */
+    
 
     public void displayTurnSummary(Restaurant restaurant, int currentTurn) {
         // summarises turn
@@ -370,23 +368,23 @@ public class GameApp {
         System.out.println("--------------------------------------------------------------------\n");
     }
 
-    /*
-     * public void displayStaffAvailability(boolean waiterAvailable, boolean
-     * chefAvailable, boolean cashierAvailable) {
-     * 
-     * System.out.println("--- STAFF AVAILABILITY ---");
-     * System.out.println("Waiter  : " + (waiterAvailable ? "AVAILABLE" : "DONE"));
-     * System.out.println("Chef    : " + (chefAvailable ? "AVAILABLE" : "DONE"));
-     * System.out.println("Cashier : " + (cashierAvailable ? "AVAILABLE" : "DONE"));
-     * 
-     * }
-     */
+    
     public void displayStaffTasks(int turn, Restaurant restaurant) {
         System.out.printf("--- STAFF TASKS AVALIABLE (TURN %d) ---\n\n", turn);
+        displayHostTasks(restaurant);
         displayWaiterTasks(restaurant);
         displayChefTasks(restaurant);
         displayCashierTasks(turn, restaurant);
         System.out.println("--------------------------------------\n");
+    }
+
+    public void displayHostTasks(Restaurant restaurant){
+        System.out.print("--- HOST'S AVALIABLE TASKS ---\n");
+        if (restaurant.getWaitingQueueSize() > 0 && restaurant.hasFreeTable()) {
+            System.out.printf("1. \u001B[4mSeat a customer in the queue\u001B[0m\n");
+        }
+        System.out.printf("2. \u001B[4mWait\n\u001B[0m");
+        System.out.println();
     }
 
     public void displayWaiterTasks(Restaurant restaurant) {
@@ -491,4 +489,49 @@ public class GameApp {
         }
     }
 
+    public HappyHourStatus getHappyHourChoice(){
+        while(true){
+            System.out.println("\u001B[4mWould you like to enable Happy Hour?\u001b[0m");
+            System.out.println("(1) Yes");
+            System.out.println("(2) No\n");
+            //System.out.print("Enter your choice (1 or 2): ");
+            int choice = readInt("Enter your choice (1-2): ");
+            switch(choice){
+                case 1 -> {
+                    System.out.println("\n\nHAPPY HOUR ACTIVATING......\n");
+                    System.out.println("\n--------------------------------------------------------------------------------------------------------------");
+                    System.out.println("\t\t\t\t\tHAPPY HOUR: ACTIVE (ROUND 1/2)");
+                    System.out.println("--------------------------------------------------------------------------------------------------------------\n");
+                    System.out.println("\nUPDATING SATISFACTION SCORES......\n");
+                    return HappyHourStatus.ACTIVE;
+                }
+                case 2 -> {
+                    System.out.println("\n\u001b[4mYou have decided not to activate HAPPY HOUR.\u001B[0m\n");
+                    System.out.println("\n--------------------------------------------------------------------------------------------------------------");
+                    System.out.println("\t\t\t\t\t  Happy Hour: NOT USED ");
+                    System.out.println("--------------------------------------------------------------------------------------------------------------\n");
+                    return HappyHourStatus.HAVE_NOT_USED;
+                }
+                default -> System.out.println("Invalid Choice. Try again.");
+            }
+        }
+    }
+
+    public void displayUpdatedSatisfaction(Restaurant restaurant){
+        
+        System.out.println("\n--- Overall Customer and Order Status ---");
+
+        for (Customer customer : restaurant.getCustomers()) {
+            String orderStatus = customer.getOrder() == null ? "NO ORDER" : customer.getOrder().getStatus().toString();
+            System.out.printf(
+                    "Customer %d : {Customer ID: %d | Customer Type: %s | Customer Status: %s | Updated Satisfaction: %d | Order Status: %s}%n",
+                    customer.getCustomerId(),
+                    customer.getCustomerId(),
+                    customer.getCustomerType().toString(),
+                    customer.getStatus(),
+                    customer.getSatisfaction(),
+                    orderStatus);
+        }
+        System.out.println("\n");
+    }
 }

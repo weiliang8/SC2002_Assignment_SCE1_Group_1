@@ -39,7 +39,7 @@ public abstract class Customer {
         }
     }
 
-    //customer choice: IDs 1,2,3,... cycle over the menu.
+    // customer choice: IDs 1,2,3,... cycle over the menu
     public MenuItem chooseMenuItem(List<MenuItem> menu) {
         Objects.requireNonNull(menu, "Menu must not be null.");
         if (menu.isEmpty()) {
@@ -105,13 +105,13 @@ public abstract class Customer {
         require(status == CustomerStatus.SEATED && order != null,
                  "Customer must be seated with an order before serving.");
         require(order.getStatus() == OrderStatus.READY
-                         || order.getStatus() == OrderStatus.SERVED,
+                        || order.getStatus() == OrderStatus.SERVED,
                  "Food must be READY before serving.");
-         if (order.getStatus() == OrderStatus.READY) {
-             order.markServed();
+        if (order.getStatus() == OrderStatus.READY) {
+            order.markServed();
        }
         servedTurn = turn;
-         status = CustomerStatus.EATING;
+        status = CustomerStatus.EATING;
      }
 
     public void finishEating(int turn) {
@@ -176,4 +176,5 @@ public abstract class Customer {
             throw new IllegalArgumentException("Turn must be positive.");
         }
     }
+
 }

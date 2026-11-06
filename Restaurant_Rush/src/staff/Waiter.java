@@ -60,7 +60,7 @@ public class Waiter{
     }
 
     //take order
-    public boolean takeOrder(Customer customer, Menu menu, int turn){
+    public boolean takeOrder(Customer customer, Menu menu, int turn, boolean isHappyHourActive){
         checkFreeThisTurn(turn);
 
         if(customer == null){
@@ -82,7 +82,7 @@ public class Waiter{
         
 
         MenuItem item = customer.chooseMenuItem(menu.getItems());
-        int priceCents = pricingController.calculateBill(customer, item);
+        int priceCents = pricingController.calculateBill(customer, item, isHappyHourActive);
         Order order = new Order(orderController.getTotalOrderCount()+1,customer.getCustomerId(), item, priceCents);
 
         customer.setOrder(order);

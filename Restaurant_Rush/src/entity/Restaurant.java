@@ -10,7 +10,6 @@ import java.util.Set;
 
 public class Restaurant {
     private static final int TABLE_COUNT = 2;
-
     private final Queue<Customer> waitingQueue;
     private final List<Customer> customers; 
     private final List<Table> tables;
@@ -36,9 +35,19 @@ public class Restaurant {
 
     private static Menu createBaseMenu() {
         Menu baseMenu = new Menu();
-        baseMenu.addItem(new Dish("Salad", 900, 1));
-        baseMenu.addItem(new Dish("Burger", 1500, 1));
-        baseMenu.addItem(new Dish("Pasta", 1800, 2));
+        
+        Dish salad = new Dish("Salad", 900, 1);
+        Dish burger = new Dish("Burger", 1500, 1);
+        Dish pasta = new Dish("Pasta", 1800, 2);
+        
+        baseMenu.addItem(salad);
+        baseMenu.addItem(burger);
+        baseMenu.addItem(pasta);
+
+        baseMenu.addItem(new ComboMeal(salad, burger));
+        baseMenu.addItem(new ComboMeal(salad, pasta));
+        baseMenu.addItem(new ComboMeal(burger, pasta));
+
         return baseMenu;
     }
 
@@ -61,7 +70,7 @@ public class Restaurant {
         return true;
     }
 
-    //Removes a customer from the queue
+    // Removes a customer from the queue 
     public boolean removeCustomerFromQueue(Customer customer) {
         if (customer == null) {
             throw new IllegalArgumentException("Customer cannot be null.");
@@ -69,6 +78,7 @@ public class Restaurant {
         return waitingQueue.remove(customer);
     }
 
+    
     //Returns the earliest customer who is eligible to pay this turn.
     public Customer getOldestReadyPayer(int turn) {
         Customer oldest = null;
@@ -102,6 +112,10 @@ public class Restaurant {
 
     public RestaurantStatistics getStatistics() {
         return statistics;
+    }
+
+    public List<Customer> getWaitingCustomers(){ // for happy hour
+        return new ArrayList<>(waitingQueue);
     }
 
     public int getWaitingQueueSize(){
@@ -150,7 +164,7 @@ public class Restaurant {
         return false;
     }
 
-    /** Records a customer's first successful serving event. */
+    //Records a customer's first successful serving event. 
     public void recordServed(Customer customer) {
         requireRegistered(customer);
         if (servedCustomers.add(customer)) {
@@ -158,7 +172,7 @@ public class Restaurant {
         }
     }
 
-    //Records a payment once and snapshots the customer's satisfaction at payment.
+    //Records a payment once and snapshots the customer's satisfaction at payment
     public void recordPayment(Customer customer, int cents) {
         requireRegistered(customer);
         if (cents < 0) {
@@ -179,7 +193,7 @@ public class Restaurant {
         paidCustomers.add(customer);
     }
 
-    //Records an unhappy departure once and removes the customer from the queue.
+    //Records an unhappy departure once and removes the customer from queue
     public void recordDeparture(Customer customer) {
         requireRegistered(customer);
         removeCustomerFromQueue(customer);
@@ -198,21 +212,5 @@ public class Restaurant {
             }
         }
         throw new IllegalArgumentException("Customer is not registered with this restaurant.");
-    }
-
-    // public Customer getfirstWaitingCustomer() {
-    // Customer dequeued_customer = waitingQueue.peek();
-    // waitingQueue.remove();
-    // return dequeued_customer;
-    // }
-
-    // public Customer getFirstSeatedCustomer() {
-    // for (Customer customer : customers) {
-    // if (customer.getStatus() == CustomerStatus.SEATED
-    // && customer.getOrder() == null) {
-    // return customer;
-    // }
-    // }
-    // return null;
-    // }
+    }    
 }
