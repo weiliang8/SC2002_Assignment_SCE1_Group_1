@@ -123,7 +123,7 @@ Money is stored as integer cents and displayed as dollars with two decimals.
 ### Customer types
 
 | Type | Satisfaction loss per waiting turn | Bill | Special behaviour |
-|---|:---:|---|---|
+|:---:|:---:|:---:|:---:|
 | Regular | 8 | Full price | None |
 | VIP | 5 | 10% off (e.g. Burger **$13.50**) | None |
 | Critic | 12 | Full price | **Review on serving** (see below) |
@@ -133,7 +133,7 @@ posts a review that immediately affects every customer still waiting for
 a table or food.
 
 | Critic's satisfaction when served | Review | Effect on each customer with waiting or seated status |
-|---|---|---|
+|:---:|:---:|:---"|
 | ≥ 70 | Good | **+10** satisfaction (maximum 100) |
 | 50 – 69 | None | No effect |
 | < 50 | Bad | **−10** satisfaction (minimum 0) |
@@ -168,7 +168,7 @@ The choice is printed when the Waiter takes the order. Because arrivals and food
 Happy Hour can be activated once per game and lasts for 2 consecutive turns.
 
 | Feature | Effect |
-|---|---|
+|:---:|:---:|
 | Order discount | 20% off new orders taken during Happy Hour |
 | VIP discount | Applied before the Happy Hour discount |
 | Satisfaction recovery | Customers waiting for a table, waiting to order, or waiting for food recover 15 satisfaction points, up to a maximum of 100, at the start of each Happy Hour turn |
@@ -294,14 +294,14 @@ Get-Content Testcases\stage3_defeat_happy_hour_notEnoughPayer.txt | java Main
 ### Test Cases and Expected Results
 
 | Test Case | Scenario | Expected Result |
-|---|---|---|
+|:---:|:---:|:---:|
 | `stage3_victory_happy_hour.txt` | Activates Happy Hour on Turn 13 and orders a discounted Pasta on Turn 14. | Happy Hour runs for Turns 13–14. Eligible customers recover 15 satisfaction at the start of each active turn, capped at 100. The Critic gives a GOOD review when served on Turn 13. The Pasta order is discounted from $18.00 to $14.40. The game ends in Victory with 4 paid customers, $58.50 revenue, and 83.50 average satisfaction. |
 | `stage3_defeat_happy_hour_notEnoughPayer.txt` | Activates Happy Hour on Turn 13 and orders a discounted Salad+Pasta combo on Turn 14. | Happy Hour runs for Turns 13–14. Eligible customers recover 15 satisfaction at the start of each active turn, capped at 100. The Salad+Pasta combo is discounted from $24.30 to $19.44. The game ends in Defeat because only 3 customers paid, below the required minimum of 4. |
 
 ### Verified Final Results
 
 | Metric | Victory Test Case | Defeat Test Case |
-|---|---|---|
+|:---:|:---:|:---:|
 | Turns played | 18 | 18 |
 | Customers served | 4 | 3 |
 | Customers paid | 4 | 3 |
@@ -387,7 +387,7 @@ SC2002_Assignment_SCE1_Group_1/
 ## Where the Rules Live
 
 | Responsibility | Class |
-|---|---|
+|:---:|:---:|
 | Game loop, arrival schedule, and final result check | `GameController` |
 | Turn order and phase sequencing | `TurnController` |
 | Victory / defeat criteria (4 paid customers, $45.00 revenue, average satisfaction ≥ 60) | `GameController.checkResult()` |
@@ -412,7 +412,7 @@ SC2002_Assignment_SCE1_Group_1/
 ## Stage 1 OO Notes
 
 | OO Concept | Explanation |
-|---|---|
+|:---:|:---:|
 | Inheritance / polymorphism | `Customer` is abstract. `RegularCustomer` supplies the 8-point waiting penalty, and `chooseMenuItem()` can be overridden by later customer types. `MenuItem` is an interface implemented by `Dish`. |
 | Encapsulation | State changes go through guarded methods such as `markSeated()`, `markServed()`, `markPaid()`, and `leave()`, that throw if transition is illegal. |
 | Composition | `Restaurant` owns the `Menu`, tables, customer records, and `RestaurantStatistics`. |
@@ -421,7 +421,7 @@ SC2002_Assignment_SCE1_Group_1/
 ## Stage 2 OO Notes
 
 | OO Concept | Explanation |
-|---|---|
+|:---:|:---:|
 | Polymorphism | `Customer` defines `applyDiscount()` and `getReviewImpact()` with "no-effect" default behavior. `VIPCustomer` and `CriticCustomer` override them. `PricingController` and `CustomerController` call the hooks on any `Customer` without checking its type. |
 | Open / closed | A new customer type can be added by creating a subclass and registering it in `CustomerType` and `CustomerCreator`, The staff classes `Order` and the turn sequence are unchanged. |
 | Factory | `CustomerCreator.createCustomer(type, id)` is the only place that maps a `CustomerType` to a subclass. |
@@ -429,7 +429,7 @@ SC2002_Assignment_SCE1_Group_1/
 ## Stage 3 OO Notes
 
 | OO Concept | Explanation |
-|---|---|
+|:---:|:---:|
 | Strategy pattern | `PricingPolicy` defines the pricing strategy interface, while `StandardPricingPolicy` provides the standard pricing implementation. `PricingController` delegates pricing calculations to the policy. |
 | Policy-based behavior | `HappyHourPolicy` encapsulates Happy Hour pricing effects, keeping them separate from the main game loop. |
 | Encapsulation | `HappyHourStatus` represents Happy Hour state, while activation and turn timing are managed through the turn flow rather than directly by `GameApp`. |
@@ -486,7 +486,7 @@ SC2002_Assignment_SCE1_Group_1/
 | Transition | New files | Changed / deleted files | Commit / comparison link |
 |:---:|:---:|:---:|:---:|
 | Stage 1 → 2 (`stage-2`) | `VIPCustomer`, `CriticCustomer`, 3 Stage 2 test inputs | 7 files changed, none deleted (Section 9.1) | [stage-1...stage-2](https://github.com/weiliang8/SC2002_Assignment_SCE1_Group_1/compare/stage-1...stage-2) |
-| Stage 2 → 3 (`stage-3`) | 7 files added: `HappyHourPolicy.java`, `ComboMeal.java`, `HappyHourStatus.java`, `Host.java`, `HostAction.java`, and 2 Stage 3 test inputs | 8 existing files modified, none deleted (Section 9.2) | *TBC* |
+| Stage 2 → 3 (`stage-3`) | `HappyHourPolicy.java`, `ComboMeal.java`, `HappyHourStatus.java`, `Host.java`, `HostAction.java`, and 2 Stage 3 test inputs | 8 files changed, none deleted (Section 9.2) | [stage-2...stage-3](https://github.com/weiliang8/SC2002_Assignment_SCE1_Group_1/compare/stage-2...stage-3) |
 
 ### 9.1 Stage 1 → Stage 2
 
