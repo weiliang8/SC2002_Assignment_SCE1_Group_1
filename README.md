@@ -313,12 +313,12 @@ Get-Content Testcases\stage3_defeat_happy_hour_notEnoughPayer.txt | java Main
 All outputs were re-verified on a clean compile of this tag.
 
 > The Stage 1 test files (`stage1_*.txt`) expect the Stage 1 arrival
-> schedule (all Regular customers). Run them at tag `stage-1`
-> ; their expected results are listed in the
+> schedule (all Regular customers). Run them at tag `stage-1`,
+> `(git checkout stage-1)`; their expected results are listed in the
 > README at that tag.
 >
 > The Stage 2 test files (`stage2_*.txt`) expect the Stage 2 game rules.
-> Run them at tag `stage-2`; their expected
+> Run them at tag `stage-2`, `(git checkout stage-2)`; their expected
 > results are listed in the README at that tag.
 ## 7. Project Structure
 
