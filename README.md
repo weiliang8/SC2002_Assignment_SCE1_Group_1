@@ -264,31 +264,41 @@ After turn 18, the game shows **Victory** or **Defeat**, listing any missed targ
 
 ## 6. Reproducible Test Runs
 
-The following test cases can be used to reproduce and verify the Stage 3 gameplay scenarios. Each test case uses a scripted sequence of player inputs.
+Scripted inputs are in Testcases/. Each file is the exact sequence of keystrokes (one per line) for a full 18-turn game. Compile first (Section 2).
 
 ### Running the Test Cases
 
 Run the program from the project root directory.
+```
+# if you are not already in the project root directory
+cd Restaurant_Rush/
+```
+
+then 
 
 **macOS / Linux**
 ```bash
-javac *.java
-java Main < Testcases/stage3_victory_happy_hour.txt
-java Main < Testcases/stage3_defeat_happy_hour_notEnoughPayer.txt
+# Stage 3 Victory with Happy Hour enabled 
+java -cp bin ui.GameApp < ../Testcases/stage3_victory_happy_hour.txt
+# Stage 3 Defeat with Happy Hour enabled 
+java -cp bin ui.GameApp < ../Testcases/stage3_defeat_happy_hour_notEnoughPayer.txt
 ```
 
 **Windows Command Prompt**
 ```bat
-javac *.java
-java Main < Testcases\stage3_victory_happy_hour.txt
-java Main < Testcases\stage3_defeat_happy_hour_notEnoughPayer.txt
+:: Stage 3 Victory with Happy Hour enabled 
+java -cp bin ui.GameApp < ../Testcases\stage3_victory_happy_hour.txt
+:: Stage 3 Defeat with Happy Hour enabled 
+java -cp bin ui.GameApp < ../Testcases\stage3_defeat_happy_hour_notEnoughPayer.txt
 ```
 
-**Windows PowerShell**
+**Windows PowerShell** (`<` redirection is not supported, so pipe the
+file in)
 ```powershell
-javac *.java
-Get-Content Testcases\stage3_victory_happy_hour.txt | java Main
-Get-Content Testcases\stage3_defeat_happy_hour_notEnoughPayer.txt | java Main
+# Stage 3 Victory with Happy Hour enabled 
+Get-Content ..\Testcases\stage3_victory_happy_hour.txt | java -cp bin ui.GameApp
+# Stage 3 Defeat with Happy Hour enabled 
+Get-Content ..\Testcases\stage3_defeat_happy_hour_notEnoughPayer.txt | java -cp bin ui.GameApp
 ```
 
 ### Test Cases and Expected Results
@@ -326,62 +336,62 @@ All outputs were re-verified on a clean compile of this tag.
 SC2002_Assignment_SCE1_Group_1/
 ├── README.md
 │
-├── Testcases/                                      # Scripted test inputs
-│   ├── stage1_defeat_abandoned_order.txt            # Stage 1: defeat due to abandonment
+├── Testcases/                                         # Scripted test inputs
+│   ├── stage1_defeat_abandoned_order.txt              # Stage 1: defeat due to abandonment
 │   ├── stage1_victory_with_invalid_seat_selection_tables_full_at_turn7.txt
-│   │                                               # Stage 1: victory with invalid seating input
-│   ├── stage2_defeat_no_service.txt                 # Stage 2: defeat due to no service
-│   ├── stage2_victory_critic_bad_review.txt          # Stage 2: victory with a Bad Critic review
-│   ├── stage2_victory_critic_good_review.txt         # Stage 2: victory with a Good Critic review
-│   ├── stage3_defeat_happy_hour_notEnoughPayer.txt   # Stage 3: defeat with fewer than 4 paid customers
-│   └── stage3_victory_happy_hour.txt                 # Stage 3: victory with Happy Hour
+│   │                                                  # Stage 1: victory with invalid seating input
+│   ├── stage2_defeat_no_service.txt                   # Stage 2: defeat due to no service
+│   ├── stage2_victory_critic_bad_review.txt           # Stage 2: victory with a Bad Critic review
+│   ├── stage2_victory_critic_good_review.txt          # Stage 2: victory with a Good Critic review
+│   ├── stage3_defeat_happy_hour_notEnoughPayer.txt    # Stage 3: defeat with fewer than 4 paid customers
+│   └── stage3_victory_happy_hour.txt                  # Stage 3: victory with Happy Hour
 │
 └── Restaurant_Rush/
     ├── src/
     │   ├── ui/
-    │   │   └── GameApp.java                          # CLI input/output and main()
+    │   │   └── GameApp.java                           # CLI input/output and main()
     │   │
     │   ├── controller/
-    │   │   ├── GameController.java                   # Game loop, arrival schedule, result check
-    │   │   ├── TurnController.java                   # Turn sequence and phase coordination
+    │   │   ├── GameController.java                    # Game loop, arrival schedule, result check
+    │   │   ├── TurnController.java                    # Turn sequence and phase coordination
     │   │   ├── CustomerController.java                # Arrivals, satisfaction, abandonment, Critic review
     │   │   ├── CustomerCreator.java                   # Creates customer objects by type
     │   │   ├── SeatingController.java                 # Table allocation and release
-    │   │   ├── OrderController.java                    # Pending and ready order queues
-    │   │   ├── PricingController.java                  # Order pricing and bill calculation
-    │   │   ├── PricingPolicy.java                      # Pricing strategy interface
-    │   │   ├── StandardPricingPolicy.java              # Standard pricing implementation
-    │   │   └── HappyHourPolicy.java                    # Happy Hour pricing and effects
+    │   │   ├── OrderController.java                   # Pending and ready order queues
+    │   │   ├── PricingController.java                 # Order pricing and bill calculation
+    │   │   ├── PricingPolicy.java                     # Pricing strategy interface
+    │   │   ├── StandardPricingPolicy.java             # Standard pricing implementation
+    │   │   └── HappyHourPolicy.java                   # Happy Hour pricing and effects
     │   │
     │   ├── staff/
     │   │   ├── Host.java                              # Customer seating
-    │   │   ├── HostAction.java                         # Host action types
-    │   │   ├── Waiter.java                             # Order-taking and serving
-    │   │   ├── WaiterAction.java                       # Waiter action types
-    │   │   ├── Chef.java                               # Food preparation
-    │   │   ├── Cashier.java                            # Payment processing
-    │   │   └── InvalidActionException.java             # Invalid staff action handling
+    │   │   ├── HostAction.java                        # Host action types
+    │   │   ├── Waiter.java                            # Order-taking and serving
+    │   │   ├── WaiterAction.java                      # Waiter action types
+    │   │   ├── Chef.java                              # Food preparation
+    │   │   ├── Cashier.java                           # Payment processing
+    │   │   └── InvalidActionException.java            # Invalid staff action handling
     │   │
     │   └── entity/
-    │       ├── Restaurant.java                         # Restaurant state and coordination
-    │       ├── RestaurantStatistics.java                # Revenue and satisfaction statistics
-    │       ├── Table.java                              # Table state
-    │       ├── Customer.java                           # Abstract customer
-    │       ├── RegularCustomer.java                    # Regular customer behavior
-    │       ├── VIPCustomer.java                        # VIP customer behavior and discount
-    │       ├── CriticCustomer.java                     # Critic review behavior
-    │       ├── CustomerType.java                       # Customer type enumeration
-    │       ├── CustomerStatus.java                     # Customer status enumeration
-    │       ├── Order.java                              # Order state and preparation progress
-    │       ├── OrderStatus.java                        # Order status enumeration
-    │       ├── MenuItem.java                           # Menu item interface
-    │       ├── Dish.java                               # Individual dish
-    │       ├── ComboMeal.java                          # Combination meal
-    │       ├── Menu.java                               # Available menu items
-    │       ├── HappyHourStatus.java                    # Happy Hour state
-    │       └── GameResult.java                         # Game outcome
+    │       ├── Restaurant.java                        # Restaurant state and coordination
+    │       ├── RestaurantStatistics.java              # Revenue and satisfaction statistics
+    │       ├── Table.java                             # Table state
+    │       ├── Customer.java                          # Abstract customer
+    │       ├── RegularCustomer.java                   # Regular customer behavior
+    │       ├── VIPCustomer.java                       # VIP customer behavior and discount
+    │       ├── CriticCustomer.java                    # Critic review behavior
+    │       ├── CustomerType.java                      # Customer type enumeration
+    │       ├── CustomerStatus.java                    # Customer status enumeration
+    │       ├── Order.java                             # Order state and preparation progress
+    │       ├── OrderStatus.java                       # Order status enumeration
+    │       ├── MenuItem.java                          # Menu item interface
+    │       ├── Dish.java                              # Individual dish
+    │       ├── ComboMeal.java                         # Combination meal
+    │       ├── Menu.java                              # Available menu items
+    │       ├── HappyHourStatus.java                   # Happy Hour state
+    │       └── GameResult.java                        # Game outcome
     │
-    └── bin/                                            # Compiled classes (git-ignored)
+    └── bin/                                           # Compiled classes (git-ignored)
 ```
 
 ## Where the Rules Live
@@ -519,11 +529,11 @@ No files were deleted. The staff classes, `Order`, `Restaurant` and
 
 | File | Purpose |
 |:---:|:---:|
-| `controller/HappyHourPolicy.java` | Implements the Happy Hour pricing policy, applying a 20% discount to new orders during the active period. |
-| `entity/ComboMeal.java` | Represents combo meals and their discounted prices and preparation requirements. |
-| `entity/HappyHourStatus.java` | Tracks whether Happy Hour is available, active, or has ended. |
+| `controller/HappyHourPolicy.java` | Implements the Happy Hour pricing policy using `PricingPolicy` interface, applying a 20% discount to new orders when Happy Hour gets activated. |
+| `entity/ComboMeal.java` | Implemented using `MenuItem` interface. Represents combo meals and their 10% discounted prices and preparation requirements. |
+| `entity/HappyHourStatus.java` | Tracks whether Happy Hour status is `HAVE_NOT_USED`, `ACTIVE`, or `ENDED`. |
 | `staff/Host.java` | Represents the Host staff member, responsible for seating customers. |
-| `staff/HostAction.java` | Defines the actions available to the Host. |
+| `staff/HostAction.java` | Defines the actions available to the Host: `SEAT_CUSTOMER`, `WAIT`|
 | `Testcases/stage3_victory_happy_hour.txt` | Reproducible Stage 3 run demonstrating a Happy Hour victory. |
 | `Testcases/stage3_defeat_happy_hour_notEnoughPayer.txt` | Reproducible Stage 3 run demonstrating defeat when fewer than four customers pay. |
 
@@ -531,14 +541,14 @@ No files were deleted. The staff classes, `Order`, `Restaurant` and
 
 | File | Change | Reason |
 |:---:|:---:|:---:|
-| `controller/GameController.java` | Updated game setup and control flow for Stage 3. | Integrates the Host and Happy Hour into the existing game flow. |
-| `controller/PricingController.java` | Updated bill calculation to apply the pricing policies in the required order. | Applies the existing customer discount before the Happy Hour discount. |
-| `controller/TurnController.java` | Updated turn processing to handle Happy Hour activation, duration, and satisfaction recovery. | Integrates the two-turn Happy Hour into the turn sequence. |
-| `entity/Customer.java` | Updated customer state and satisfaction handling. | Supports the Stage 3 customer lifecycle and Happy Hour effects. |
-| `entity/Menu.java` | Updated the menu to include combo meals. | Makes combo meals available for ordering. |
-| `entity/Restaurant.java` | Updated restaurant state and operations. | Supports the Stage 3 game flow and Happy Hour state. |
-| `staff/Waiter.java` | Updated waiter actions. | Supports the Stage 3 order and service flow. |
-| `ui/GameApp.java` | Updated the user interface for Host actions, combo meals, and Happy Hour. | Allows the player to interact with the new Stage 3 features. |
+| `controller/GameController.java` | Updated `startGame()`, `runGame()`, `runTurn()`, and `displayMenu()` to initialise and run Stage 3 with Host, ComboMeals and Happy Hour features. | Integrates the Host and Happy Hour into the existing game flow. |
+| `controller/PricingController.java` | Updated `calculateBill()` to apply `customer.applyDiscount()` before applying the selected pricing policy. Added the Happy Hour pricing policy through `HappyHourPolicy`. |Ensure the VIP discount is applied first, followed by thr 20% Happy Hour discount, as required by the brief. |
+| `controller/TurnController.java` | Updated `playTurn()` to include the Happy Hour choice and Host phase. Added `runHostPhase()` and `runHappyHourChoice()` to handle Host actions and Happy Hour activation. | Integrates the Host into the turn sequence and manages Happy Hour activation, duration and satisfaction recovery without placing these rules in GameApp. |
+| `entity/Customer.java` | Updated `chooseMenuItem()` to select from the full menu using `(customerId - 1) % menu.size()`. Added `setSatisfaction()` to support satisfaction recovery. | Accommodates the expanded six-item menu, including the three new ComboMeals. Customers 1–3 retain their original choices, while customers 4–6 can now select combo meals. `setSatisfaction()` supports Happy Hour's 15-point satisfaction recovery, capped at 100. |
+| `entity/Menu.java` | Updated the menu setup to include the three ComboMeal options through `addItem()` and `getItems()`. | Makes combo meals available for ordering. |
+| `entity/Restaurant.java` | Updated `createBaseMenu()` to register the three ComboMeals. Added `getWaitingCustomers()` to retrieve customers eligible for Happy Hour satisfaction recovery. | Makes ComboMeals part of the restaurant's menu and allows Happy Hour effects to be applied to eligible customers. |
+| `staff/Waiter.java` | Updated waiter actions to take into account Happy Hour. | Allows customers to choose from the expanded menu and ensures the correct discounts are calculated and locked when the order is taken. |
+| `ui/GameApp.java` | Updated the user interface for Host actions, combo meals, and Happy Hour. | Allows the player to interact with the new Host, ComboMeal and Happy Hour features through the CLI. |
 
 No files were deleted.
 
