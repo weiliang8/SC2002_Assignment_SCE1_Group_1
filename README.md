@@ -529,8 +529,8 @@ No files were deleted. The staff classes, `Order`, `Restaurant` and
 
 | File | Purpose |
 |:---:|:---:|
-| `controller/HappyHourPolicy.java` | Implements the Happy Hour pricing policy using `PricingPolicy` interface, applying a 20% discount to new orders when Happy Hour gets activated. |
-| `entity/ComboMeal.java` | Implemented using `MenuItem` interface. Represents combo meals and their 10% discounted prices and preparation requirements. |
+| `controller/HappyHourPolicy.java` | Implements the Happy Hour pricing policy using `PricingPolicy` interface, applying a 20% discount to new orders when Happy Hour is active. |
+| `entity/ComboMeal.java` | Implemented using `MenuItem` interface. Represents combo meals and with 10% discounted prices and preparation requirements based off the two dishes chosen. |
 | `entity/HappyHourStatus.java` | Tracks whether Happy Hour status is `HAVE_NOT_USED`, `ACTIVE`, or `ENDED`. |
 | `staff/Host.java` | Represents the Host staff member, responsible for seating customers. |
 | `staff/HostAction.java` | Defines the actions available to the Host: `SEAT_CUSTOMER`, `WAIT`|
@@ -541,14 +541,14 @@ No files were deleted. The staff classes, `Order`, `Restaurant` and
 
 | File | Change | Reason |
 |:---:|:---:|:---:|
-| `controller/GameController.java` | Updated `startGame()`, `runGame()`, `runTurn()`, and `displayMenu()` to initialise and run Stage 3 with Host, ComboMeals and Happy Hour features. | Integrates the Host and Happy Hour into the existing game flow. |
-| `controller/PricingController.java` | Updated `calculateBill()` to apply `customer.applyDiscount()` before applying the selected pricing policy. Added the Happy Hour pricing policy through `HappyHourPolicy`. |Ensure the VIP discount is applied first, followed by thr 20% Happy Hour discount, as required by the brief. |
-| `controller/TurnController.java` | Updated `playTurn()` to include the Happy Hour choice and Host phase. Added `runHostPhase()` and `runHappyHourChoice()` to handle Host actions and Happy Hour activation. | Integrates the Host into the turn sequence and manages Happy Hour activation, duration and satisfaction recovery without placing these rules in GameApp. |
-| `entity/Customer.java` | Updated `chooseMenuItem()` to select from the full menu using `(customerId - 1) % menu.size()`. Added `setSatisfaction()` to support satisfaction recovery. | Accommodates the expanded six-item menu, including the three new ComboMeals. Customers 1–3 retain their original choices, while customers 4–6 can now select combo meals. `setSatisfaction()` supports Happy Hour's 15-point satisfaction recovery, capped at 100. |
-| `entity/Menu.java` | Updated the menu setup to include the three ComboMeal options through `addItem()` and `getItems()`. | Makes combo meals available for ordering. |
-| `entity/Restaurant.java` | Updated `createBaseMenu()` to register the three ComboMeals. Added `getWaitingCustomers()` to retrieve customers eligible for Happy Hour satisfaction recovery. | Makes ComboMeals part of the restaurant's menu and allows Happy Hour effects to be applied to eligible customers. |
-| `staff/Waiter.java` | Updated waiter actions to take into account Happy Hour. | Allows customers to choose from the expanded menu and ensures the correct discounts are calculated and locked when the order is taken. |
-| `ui/GameApp.java` | Updated the user interface for Host actions, combo meals, and Happy Hour. | Allows the player to interact with the new Host, ComboMeal and Happy Hour features through the CLI. |
+| `controller/GameController.java` | Updated `startGame()` to initialise the Host and pass it to TurnController. Updated the welcome instructions to introduce the Host, ComboMeals and Happy Hour. | Integrates the Host and Happy Hour into the existing game flow. |
+| `controller/PricingController.java` | Updated `calculateBill()` to accept an `isHappyHourActive` parameter and apply `customer.applyDiscount()` before applying the selected pricing policy. | Ensure the VIP discount is applied first, followed by thr 20% Happy Hour discount, as required by the brief. |
+| `controller/TurnController.java` | Updated `playTurn()` to include Happy Hour processing and the Host phase. Added `runHostPhase()`, `runHappyHourChoice()` and `processHappyHour()`. | Integrates the Host into the turn sequence and manages Happy Hour activation, duration and satisfaction recovery without placing these rules in GameApp. |
+| `entity/Customer.java` | Updated `chooseMenuItem()` to select from the full menu using `(customerId - 1) % menu.size()`. Modified `adjustSatisfaction` to support satisfaction recovery. | Accommodates the expanded six-item menu, including the three new ComboMeals. Customers 1–3 retain their original choices, while customers 4–6 can now select combo meals. `adjustSatisfaction()` will now also supports Happy Hour's 15-point satisfaction recovery, capped at 100. |
+| `entity/Menu.java` | Updated `getItems()` to return an unmodifiable list using `Collections.unmodifiableList(items)`. | Prevents external classes from directly modifying the menu's internal collection, preserving encapsulation. |
+| `entity/Restaurant.java` | Updated `createBaseMenu()` to register the three ComboMeals. Added `getWaitingCustomers()` to retrieve customers eligibility for Happy Hour satisfaction recovery. | Makes ComboMeals part of the restaurant's menu and allows Happy Hour effects to be applied to eligible customers. |
+| `staff/Waiter.java` | Updated `takeOrder()` to accept an `isHappyHourActive` parameter and pass it to `PricingController.calculateBill()`. | Ensures the correct discounts are calculated and locked into the order when it is taken. |
+| `ui/GameApp.java` | Added `getHostAction()`, `displayHostTasks()`, `getHappyHourChoice()` and `displayUpdatedSatisfaction()`. Updated existing UI methods to support the Stage 3 features. | Allows the player to interact with the new Host, ComboMeal and Happy Hour features through the CLI. |
 
 No files were deleted.
 
