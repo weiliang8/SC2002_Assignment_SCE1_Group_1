@@ -264,17 +264,22 @@ After turn 18, the game shows **Victory** or **Defeat**, listing any missed targ
 
 ## 6. Reproducible Test Runs
 
-Scripted inputs are in Testcases/. Each file is the exact sequence of keystrokes (one per line) for a full 18-turn game. Compile first (Section 2).
+Scripted inputs are in `Testcases/`. Each file is the exact sequence of keystrokes (one per line) for a full 18-turn game. 
 
 ### Running the Test Cases
 
-Run the program from the project root directory.
+#### 1. Run the program from the project root directory.
 ```
 # if you are not already in the project root directory
 cd Restaurant_Rush/
 ```
 
-then 
+#### 2. Compile (if you already haven't in section 2)
+``` 
+javac -d bin -sourcepath src src/ui/GameApp.java
+```
+
+#### 3. Run test-cases (choose based on the OS/terminal you are using)
 
 **macOS / Linux**
 ```bash
@@ -284,6 +289,8 @@ java -cp bin ui.GameApp < ../Testcases/stage3_victory_happy_hour.txt
 java -cp bin ui.GameApp < ../Testcases/stage3_defeat_happy_hour_notEnoughPayer.txt
 ```
 
+or
+
 **Windows Command Prompt**
 ```bat
 :: Stage 3 Victory with Happy Hour enabled 
@@ -291,6 +298,8 @@ java -cp bin ui.GameApp < ../Testcases\stage3_victory_happy_hour.txt
 :: Stage 3 Defeat with Happy Hour enabled 
 java -cp bin ui.GameApp < ../Testcases\stage3_defeat_happy_hour_notEnoughPayer.txt
 ```
+
+or
 
 **Windows PowerShell** (`<` redirection is not supported, so pipe the
 file in)
