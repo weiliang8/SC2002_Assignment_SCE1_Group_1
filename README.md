@@ -133,7 +133,7 @@ posts a review that immediately affects every customer still waiting for
 a table or food.
 
 | Critic's satisfaction when served | Review | Effect on each customer with waiting or seated status |
-|:---:|:---:|:---"|
+|:---:|:---:|:---:|
 | ≥ 70 | Good | **+10** satisfaction (maximum 100) |
 | 50 – 69 | None | No effect |
 | < 50 | Bad | **−10** satisfaction (minimum 0) |
