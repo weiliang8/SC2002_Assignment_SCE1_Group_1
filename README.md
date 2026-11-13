@@ -31,8 +31,12 @@ first.
 
 ## 2. Build and run
 
-### IMPORTANT: The first 2 commands in this section are run from the `Restaurant_Rush/` folder. The commands are the same on every OS except where noted.
+### IMPORTANT: The compile and run commands in this section are run from the `Restaurant_Rush/` folder. Both commands are the same on every OS except where noted.
 
+To run from `Restaurant_Rush/` folder, copy and paste this command into the command line after cloning this repo
+``` 
+cd SC2002_Assignment_SCE1_Group_1/Restaurant_Rush/
+```
 
 **Compile** (macOS / Linux, Windows CMD and PowerShell all use the same
 command)
@@ -271,7 +275,7 @@ Scripted inputs are in `Testcases/`. Each file is the exact sequence of keystrok
 #### 1. Run the program from the project root directory.
 ```
 # if you are not already in the project root directory
-cd Restaurant_Rush/
+cd SC2002_Assignment_SCE1_Group_1/Restaurant_Rush/
 ```
 
 #### 2. Compile (if you already haven't in section 2)
