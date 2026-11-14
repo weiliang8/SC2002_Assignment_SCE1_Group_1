@@ -59,7 +59,7 @@ game.
 macOS / Linux (bash / zsh):
 
 ``` bash
-cd Restaurant_Rush
+cd SC2002_Assignment_SCE1_Group_1/Restaurant_Rush/
 javac -d bin -sourcepath src src/ui/GameApp.java
 java -cp bin ui.GameApp
 ```
@@ -69,7 +69,7 @@ or
 Windows CMD:
 
 ``` bat
-cd Restaurant_Rush
+cd SC2002_Assignment_SCE1_Group_1/Restaurant_Rush/
 javac -d bin -sourcepath src src\ui\GameApp.java
 java -cp bin ui.GameApp
 ```
@@ -79,7 +79,7 @@ or
 Windows PowerShell:
 
 ``` powershell
-cd Restaurant_Rush
+cd SC2002_Assignment_SCE1_Group_1/Restaurant_Rush/
 javac -d bin -sourcepath src src\ui\GameApp.java
 java -cp bin ui.GameApp
 ```
