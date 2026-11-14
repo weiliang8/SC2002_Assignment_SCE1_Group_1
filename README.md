@@ -566,7 +566,6 @@ No files were deleted. The staff classes, `Order`, `Restaurant` and
 
 No files were deleted.
 
-## 10. Video timestamps (to be filled in)
 
 ## 10. Video
 
