@@ -11,7 +11,8 @@ first.
 -   **Repository:**
     https://github.com/weiliang8/SC2002_Assignment_SCE1_Group_1
 -   **This version:** Git tag `stage-3`
--   `Update`: From Stage 2 -> Stage 3 — added Host, ComboMeal, and HappyHour  
+-   `Update`: From Stage 2 -> Stage 3 — added Host, ComboMeal, and HappyHour
+-   **Demo Video:** https://youtu.be/dZWwT4fTGbM
 
 **Group members**
 
@@ -567,12 +568,26 @@ No files were deleted.
 
 ## 10. Video timestamps (to be filled in)
 
-| # | Segment | Timestamp | Presenter |
-|:---:|:---:|:---:|:---:|
-| 1 | Game launching from the submitted project | *TBC* | *TBC* |
-| 2 | Meaningful manager choices, including a constrained-staff decision | *TBC* | *TBC* |
-| 3 | A dish going READY → SERVED → payment | *TBC* | *TBC* |
-| 4 | VIP or Critic behaviour (Stage 2) | *TBC* | *TBC* |
-| 5 | A Stage 3 feature | *TBC* | *TBC* |
-| 6 | One victory and one defeat | *TBC* | *TBC* |
-| 7 | Stage tag comparisons and diagrams | *TBC* | *TBC* |
+## 10. Video
+
+**Recording:** https://youtu.be/dZWwT4fTGbM (about 15 minutes)
+
+| # | Segment | Timestamp |
+|:---:|:---:|:---:|
+| 1 | Game launching from the submitted project | 1:49 | 
+| 2 | Meaningful manager choices, including a constrained-staff decision | 3:31 (Host can seat only one customer: 3:50; Waiter told to wait: 4:17) | 
+| 3 | A dish going READY → SERVED → payment | 2:22 – 2:57 | 
+| 4 | VIP or Critic behaviour (Stage 2) | VIP: 3:05, Critic review: 4:56 | 
+| 5 | A Stage 3 feature | Happy Hour: 4:33 | 
+| 6 | One victory and one defeat | Victory: 5:49, Defeat: 6:23 | 
+| 7 | Stage tag comparisons and diagrams | Sequence diagram: 6:59; class diagram and stage changes: 9:31 (Stage 1 → 2: 10:20, Stage 2 → 3: 10:49) |
+
+### Full outline
+
+| Time | Part | Presenter |
+|:---:|:---:|:---:|
+| 0:00 | Game overview and the three stages | Jiratip |
+| 1:49 | Gameplay demo (victory and defeat runs) | Venkatesh |
+| 6:59 | Sequence diagram (Stage 2 and 3 features) | Wei Liang |
+| 9:31 | Class diagram, stage changes, OOP and SOLID | Arzakhel |
+| 12:26 | Individual contributions and reflection | Nicholas |
