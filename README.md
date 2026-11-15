@@ -457,7 +457,7 @@ SC2002_Assignment_SCE1_Group_1/
 | Strategy pattern | `PricingPolicy` defines the pricing strategy interface, while `StandardPricingPolicy` provides the standard pricing implementation. `PricingController` delegates pricing calculations to the policy. |
 | Policy-based behavior | `HappyHourPolicy` encapsulates Happy Hour pricing effects, keeping them separate from the main game loop. |
 | Encapsulation | `HappyHourStatus` represents Happy Hour state, while activation and turn timing are managed through the turn flow rather than directly by `GameApp`. |
-| Separation of concerns | `TurnController` manages Happy Hour timing, `CustomerController` handles satisfaction recovery, and pricing components handle discounts. |
+| Separation of concerns | `TurnController` manages Happy Hour timing and satisfaction recovery, and pricing components handle discounts. |
 | Extensibility | Pricing behavior can be changed through pricing policy implementations without rewriting the controllers that request price calculations. |
 
 ## 8. Checklist (against the brief)
@@ -492,7 +492,7 @@ SC2002_Assignment_SCE1_Group_1/
 ### Stage 3
 
 - [x] Compiles and runs independently at tag `stage-3`
-- [x] Includes the Host role, allowwing player to seat waiting customer
+- [x] Introduces ComboMeal: two existing dishes, priced at 90% of their combined price, with preparation units equal to the sum of the two dishes
 - [x] Introduces ComboMeal with two dishes and two preparation units. 
 - [x] Includes the Happy Hour feature, available once per game for two consecutive turns
 - [x] Allows the player to choose whether to activate Happy Hour when available
