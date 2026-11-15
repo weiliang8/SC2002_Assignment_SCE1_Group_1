@@ -299,9 +299,9 @@ or
 **Windows Command Prompt**
 ```bat
 :: Stage 3 Victory with Happy Hour enabled 
-java -cp bin ui.GameApp < ../Testcases\stage3_victory_happy_hour.txt
+java -cp bin ui.GameApp < ..\Testcases\stage3_victory_happy_hour.txt
 :: Stage 3 Defeat with Happy Hour enabled 
-java -cp bin ui.GameApp < ../Testcases\stage3_defeat_happy_hour_notEnoughPayer.txt
+java -cp bin ui.GameApp < ..\Testcases\stage3_defeat_happy_hour_notEnoughPayer.txt
 ```
 
 or
@@ -375,7 +375,7 @@ SC2002_Assignment_SCE1_Group_1/
     │   │   ├── PricingController.java                 # Order pricing and bill calculation
     │   │   ├── PricingPolicy.java                     # Pricing strategy interface
     │   │   ├── StandardPricingPolicy.java             # Standard pricing implementation
-    │   │   └── HappyHourPolicy.java                   # Happy Hour pricing and effects
+    │   │   └── HappyHourPolicy.java                   # Happy Hour pricing
     │   │
     │   ├── staff/
     │   │   ├── Host.java                              # Customer seating
@@ -428,7 +428,7 @@ SC2002_Assignment_SCE1_Group_1/
 | Standard pricing and bill calculation | `PricingPolicy`, `StandardPricingPolicy`, `PricingController` |
 | Happy Hour state | `HappyHourStatus` |
 | Happy Hour activation and turn timing | `TurnController` |
-| Happy Hour satisfaction recovery | `CustomerController` |
+| Happy Hour satisfaction recovery | `TurnController` |
 | Happy Hour pricing effects | `HappyHourPolicy`, applied through `PricingController` |
 | Revenue and average satisfaction | `RestaurantStatistics`, through `Restaurant` |
 | Input and output only; no game rules | `GameApp` |
@@ -482,7 +482,7 @@ SC2002_Assignment_SCE1_Group_1/
 -   [x] Critic special behaviour defined and documented (review on
     serving, Section 3)
 -   [x] Reproducible base-setting runs include one VIP and one Critic,
-    with six arrivals in total (Section 5)
+    with six arrivals in total (Section 6)
 -   [x] All customer types follow the same order and service flow
 -   [x] Different behaviour is dispatched through the customer objects,
     with no chain of type checks in the turn controller
@@ -492,6 +492,8 @@ SC2002_Assignment_SCE1_Group_1/
 ### Stage 3
 
 - [x] Compiles and runs independently at tag `stage-3`
+- [x] Includes the Host role, allowwing player to seat waiting customer
+- [x] Introduces ComboMeal with two dishes and two preparation units. 
 - [x] Includes the Happy Hour feature, available once per game for two consecutive turns
 - [x] Allows the player to choose whether to activate Happy Hour when available
 - [x] Applies Happy Hour satisfaction recovery to eligible customers, capped at 100
@@ -510,7 +512,7 @@ SC2002_Assignment_SCE1_Group_1/
 | Transition | New files | Changed / deleted files | Commit / comparison link |
 |:---:|:---:|:---:|:---:|
 | Stage 1 → 2 (`stage-2`) | `VIPCustomer`, `CriticCustomer`, 3 Stage 2 test inputs | 7 files changed, none deleted (Section 9.1) | [stage-1...stage-2](https://github.com/weiliang8/SC2002_Assignment_SCE1_Group_1/compare/stage-1...stage-2) |
-| Stage 2 → 3 (`stage-3`) | `HappyHourPolicy.java`, `ComboMeal.java`, `HappyHourStatus.java`, `Host.java`, `HostAction.java`, and 2 Stage 3 test inputs | 8 files changed, none deleted (Section 9.2) | [stage-2...stage-3](https://github.com/weiliang8/SC2002_Assignment_SCE1_Group_1/compare/stage-2...stage-3) |
+| Stage 2 → 3 (`stage-3`) | `HappyHourPolicy.java`, `ComboMeal.java`, `HappyHourStatus.java`, `Host.java`, `HostAction.java`, and 2 Stage 3 test inputs | 7 files changed, none deleted (Section 9.2) | [stage-2...stage-3](https://github.com/weiliang8/SC2002_Assignment_SCE1_Group_1/compare/stage-2...stage-3) |
 
 ### 9.1 Stage 1 → Stage 2
 
@@ -520,7 +522,7 @@ SC2002_Assignment_SCE1_Group_1/
 |:---:|:---:|
 | `entity/VIPCustomer.java` | Extends `Customer`. Loses 5 satisfaction per waiting turn and overrides `applyDiscount()` to give 10% off. |
 | `entity/CriticCustomer.java` | Extends `Customer`. Loses 12 satisfaction per waiting turn and overrides `getReviewImpact()` to return +10, −10 or 0. |
-| `Testcases/stage2_*.txt` | Reproducible base-setting runs with one VIP and one Critic (Section 5). |
+| `Testcases/stage2_*.txt` | Reproducible base-setting runs with one VIP and one Critic (Section 6). |
 
 **Changed files**
 
@@ -556,9 +558,8 @@ No files were deleted. The staff classes, `Order`, `Restaurant` and
 | File | Change | Reason |
 |:---:|:---:|:---:|
 | `controller/GameController.java` | Updated `startGame()` to initialise the Host and pass it to TurnController. Updated the welcome instructions to introduce the Host, ComboMeals and Happy Hour. | Integrates the Host and Happy Hour into the existing game flow. |
-| `controller/PricingController.java` | Updated `calculateBill()` to accept an `isHappyHourActive` parameter and apply `customer.applyDiscount()` before applying the selected pricing policy. | Ensure the VIP discount is applied first, followed by thr 20% Happy Hour discount, as required by the brief. |
+| `controller/PricingController.java` | Updated `calculateBill()` to accept an `isHappyHourActive` parameter and apply `customer.applyDiscount()` before applying the selected pricing policy. | Ensure the VIP discount is applied first, followed by the 20% Happy Hour discount, as required by the brief. |
 | `controller/TurnController.java` | Updated `playTurn()` to include Happy Hour processing and the Host phase. Added `runHostPhase()`, `runHappyHourChoice()` and `processHappyHour()`. | Integrates the Host into the turn sequence and manages Happy Hour activation, duration and satisfaction recovery without placing these rules in GameApp. |
-| `entity/Customer.java` | Updated `chooseMenuItem()` to select from the full menu using `(customerId - 1) % menu.size()`. Modified `adjustSatisfaction` to support satisfaction recovery. | Accommodates the expanded six-item menu, including the three new ComboMeals. Customers 1–3 retain their original choices, while customers 4–6 can now select combo meals. `adjustSatisfaction()` will now also supports Happy Hour's 15-point satisfaction recovery, capped at 100. |
 | `entity/Menu.java` | Updated `getItems()` to return an unmodifiable list using `Collections.unmodifiableList(items)`. | Prevents external classes from directly modifying the menu's internal collection, preserving encapsulation. |
 | `entity/Restaurant.java` | Updated `createBaseMenu()` to register the three ComboMeals. Added `getWaitingCustomers()` to retrieve customers eligibility for Happy Hour satisfaction recovery. | Makes ComboMeals part of the restaurant's menu and allows Happy Hour effects to be applied to eligible customers. |
 | `staff/Waiter.java` | Updated `takeOrder()` to accept an `isHappyHourActive` parameter and pass it to `PricingController.calculateBill()`. | Ensures the correct discounts are calculated and locked into the order when it is taken. |
