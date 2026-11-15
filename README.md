@@ -493,7 +493,7 @@ SC2002_Assignment_SCE1_Group_1/
 
 - [x] Compiles and runs independently at tag `stage-3`
 - [x] Introduces ComboMeal: two existing dishes, priced at 90% of their combined price, with preparation units equal to the sum of the two dishes
-- [x] Introduces ComboMeal with two dishes and two preparation units. 
+- [x] Introduces ComboMeal: two existing dishes, priced at 90% of their combined price, with preparation units equal to the sum of the two dishes
 - [x] Includes the Happy Hour feature, available once per game for two consecutive turns
 - [x] Allows the player to choose whether to activate Happy Hour when available
 - [x] Applies Happy Hour satisfaction recovery to eligible customers, capped at 100
